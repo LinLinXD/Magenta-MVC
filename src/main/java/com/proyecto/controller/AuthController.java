@@ -60,13 +60,6 @@ public class AuthController {
     }
 
 
-    @GetMapping("/home")
-    public String dashboard(HttpSession session, Model model) {
-
-        String username = (String) session.getAttribute("USERNAME");
-        model.addAttribute("username", username);
-        return "home";
-    }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {

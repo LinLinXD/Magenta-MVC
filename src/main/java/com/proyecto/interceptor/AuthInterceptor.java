@@ -9,39 +9,59 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.Set;
 
+
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
+    // Rutas que siempre serán públicas (recursos estáticos)
+    private static final Set<String> STATIC_PATHS = Set.of("/css/", "/js/", "/images/", "/login.css");
+    private static final Set<String> AUTH_PATHS = Set.of("/login", "/register");
+    private static final Set<String> PUBLIC_PATHS = Set.of("/", "/home");
 
-    private static final Set<String> PUBLIC_PATHS = Set.of("/login", "/register", "/css", "/js", "/images");
+
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
         String path = request.getRequestURI();
-        logger.debug("Interceptando petición a: {}", path);
 
-        if (isPublicPath(path)) {
+        // Si es un recurso estático, permitir acceso inmediatamente
+        if (isStaticResource(path)) {
+            logger.debug("Permitiendo acceso a recurso estático: {}", path);
             return true;
         }
 
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("JWT_TOKEN") == null) {
-            logger.debug("No hay sesión o token JWT");
+        boolean isAuthenticated = session != null && session.getAttribute("JWT_TOKEN") != null;
+
+        // Si el usuario está autenticado y trata de acceder a login o register
+        if (isAuthenticated && isAuthPath(path)) {
+            response.sendRedirect("/home");
+            return false;
+        }
+
+        // Si el usuario NO está autenticado y trata de acceder a una ruta protegida
+        if (!isAuthenticated && !isAuthPath(path) && !isPublicPath(path)) {
+            logger.debug("Usuario no autenticado intentando acceder a {}, redirigiendo a /login", path);
             response.sendRedirect("/login");
             return false;
         }
 
-
-
-
-
-        // Ya no verificamos roles aquí, lo dejamos para el aspecto
         return true;
     }
 
+    private boolean isStaticResource(String path) {
+        return STATIC_PATHS.stream().anyMatch(path::startsWith) ||
+                path.endsWith(".css") || path.endsWith(".js") ||
+                path.endsWith(".png") || path.endsWith(".jpg") ||
+                path.endsWith(".jpeg") || path.endsWith(".gif");
+    }
+
+    private boolean isAuthPath(String path) {
+        return AUTH_PATHS.stream().anyMatch(path::equals);
+    }
+
     private boolean isPublicPath(String path) {
-        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        return PUBLIC_PATHS.stream().anyMatch(path::equals);
     }
 }

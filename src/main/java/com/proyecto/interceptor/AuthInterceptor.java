@@ -13,7 +13,7 @@ import java.util.Set;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
     // Rutas que siempre serán públicas (recursos estáticos)
-    private static final Set<String> STATIC_PATHS = Set.of("/css/", "/js/", "/images/", "/login.css");
+    private static final Set<String> STATIC_PATHS = Set.of("/css/", "/js/", "/images/", "/login.css", "/home.css");
     private static final Set<String> AUTH_PATHS = Set.of("/login", "/register");
     private static final Set<String> PUBLIC_PATHS = Set.of("/", "/home");
 

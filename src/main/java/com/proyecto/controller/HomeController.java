@@ -13,6 +13,6 @@ public class HomeController {
     public String home(HttpSession session, Model model) {
         String username = (String) session.getAttribute("USERNAME");
         model.addAttribute("username", username);
-        return "home";
+        return "/home";
     }
 }

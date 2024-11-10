@@ -1,0 +1,28 @@
+.login-button {
+    background: transparent;
+    border: 1.5px solid white;    /* Reducido el grosor del borde */
+    padding: 0.3rem 1.2rem;       /* Reducido el padding */
+    border-radius: 15px;          /* Reducido el border-radius */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-button a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.8rem;           /* Reducido el tamaño de fuente */
+    font-weight: 500;
+    letter-spacing: 0.5px;       /* Reducido el espaciado de letras */
+}
+
+.login-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 12px rgba(255, 255, 255, 0.2); /* Reducido el shadow */
+}
+
+/* Efecto al hacer click */
+.login-button:active {
+    transform: translateY(0px);
+    box-shadow: 0 1px 6px rgba(255, 255, 255, 0.1);
+}

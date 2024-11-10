@@ -1,47 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Magenta Inicio</title>
-    <link rel="stylesheet" th:href="@{/home.css}">
-    <link rel="stylesheet" th:href="@{/reset.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+
+    <link rel="stylesheet" th:href="@{/css/home-css/home.css?v=1.4}">
+    <link rel="stylesheet" th:href="@{/css/home-css/hero-image.css?v=1}">
+    <link rel="stylesheet" th:href="@{/css/home-css/loginButton.css?v=1}">
+
 </head>
-
 <body>
+
     <header class="header">
-            <div class="header-container">
-                <nav class="header-logo">
-                    <span> Magenta </span>
-                </nav>
-
-                <nav class="header-items">
-                    <span>Inicio</span>
-                    <span>Nosotros</span>
-                    <span>Sedes</span>
-                    <span>Especialidades</span>
-                    <span>Registrarse</span>
-                    <span>Iniciar Sesion</span>
-                </nav>
-
+        <div class="header-burger-list"  >
+            <div class="burger-icon">
+                <span class="burger-inner"></span>
             </div>
+        </div>
+
+        <div class="header-logo">
+            <span>Magenta</span>
+        </div>
+
+        <div>
+            <div class="usuario-2">
+                <a th:href="@{/modifyUser}" th:if="${username != null}" th:text="${username}"></a>
+                <span th:unless="${username != null}">
+                        <button class="login-button">
+                            <a href="/login">Login</a>
+                        </button>
+                </span>
+            </div>
+        </div>
+
+        <div class="header-sections">
+            <div class="usuario">
+                <span th:if="${username != null}" th:text="${username}"></span>
+                <span th:unless="${username != null}">
+                    <button class="login-button">
+                        <a href="/login">Login</a>
+                    </button>
+                </span>
+            </div>
+            <ul class="header-items">
+                <li>Inicio</li>
+                <li>Producto</li>
+                <li>Contacto</li>
+                <li>Nosotros</li>
+            </ul>
+        </div>
     </header>
 
-
-    <div class="menu">
-            <nav class="links">
-                <span>Inicio</span>
-                <span>Nosotros</span>
-                <span>Sedes</span>
-                <span>Especialidades</span>
-            </nav>
-
-            <nav class="registro-login">
-                <span>Registrarse</span>
-                <span>Iniciar Sesion</span>
-            </nav>
+    <div class="hero-image-container">
     </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <br><br><br><br><br>
+
+    <script th:src="@{/javascript/home-js/burger-function.js?v=1}"></script>
+    <script th:src="@{/javascript/home-js/header-bg-color.js?v=1.7}"></script>
 
 </body>
-
 </html>

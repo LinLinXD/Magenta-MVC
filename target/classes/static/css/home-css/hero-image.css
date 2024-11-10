@@ -1,0 +1,15 @@
+.hero-image-container{
+    width: 100%;
+    display: flex;
+    height: var(--var-hero-image-height);
+    background-image: linear-gradient(
+            rgba(255, 0, 255, 0.3), /* Color magenta con opacidad */
+            rgba(128, 0, 128, 0.3)  /* Color púrpura con opacidad */
+    ), url("../../images/hero-image-magenta.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+@media screen and (min-width: 375px) {
+
+}

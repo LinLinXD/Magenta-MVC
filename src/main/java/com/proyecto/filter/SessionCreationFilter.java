@@ -26,14 +26,14 @@ public class SessionCreationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getRequestURI();
 
-        // Si es una ruta pública y ya existe una sesión sin token, la invalidamos
+        // Si es una ruta pública, no creamos sesión
         if (isPublicPath(path)) {
-            HttpSession existingSession = httpRequest.getSession(false);
-            if (existingSession != null && existingSession.getAttribute("JWT_TOKEN") == null) {
-                existingSession.invalidate();
-            }
+            // No crear ni invalidar sesión en rutas públicas, simplemente pasar la solicitud
+            chain.doFilter(request, response);
+            return;
         }
 
+        // Continuar con el filtro en otras rutas
         chain.doFilter(request, response);
     }
 

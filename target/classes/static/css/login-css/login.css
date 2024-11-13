@@ -1,32 +1,27 @@
-/* Estilos base - Mobile first */
-
-
-
 *,
 *::after,
-*::before{
+*::before {
     margin: 0;
     padding: 0;
     box-sizing: inherit;
     color: inherit;
 }
 
-html{
+html {
     box-sizing: border-box;
 }
 
-
 body {
-    display: block !important; /* Fuerza que no sea flex */
+    display: block !important;
     background-color: rgb(157, 157, 157);
     font-family: Arial, sans-serif;
-    position: relative; /* Para el posicionamiento de los elementos hijos */
+    position: relative;
     overflow-x: hidden;
-    height: 100vh; /* Fuerza altura fija */
+    height: 100vh;
 }
 
 .login-container {
-    background-color: #ba2aae;
+    background-color: #A900A3FF;
     width: 85%;
     height: auto;
     min-height: 70vh;
@@ -34,11 +29,11 @@ body {
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     overflow: hidden;
-    margin: 1rem auto; /* auto en los lados lo centrará horizontalmente */
+    margin: 1rem auto;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Esto lo centra vertical y horizontalmente */
+    transform: translate(-50%, -50%);
 }
 
 .form {
@@ -68,36 +63,70 @@ h1 {
     text-align: center;
 }
 
+/* ... (mantener los estilos base hasta .form-group) ... */
+
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    width: 100%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 25px;
+    position: relative;
 }
 
-label {
+.form-group label {
+    position: absolute;
+    left: 0.3rem;
+    top: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-left: 0.3rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
 }
 
-input {
+.form-group input {
+    width: 95%;
+    margin: 0 auto;
+    padding: 0.8rem 0.3rem;
     background: transparent;
     border: none;
     border-bottom: 2px solid rgba(255, 255, 255, 0.4);
-    padding: 0.8rem 0.3rem;
     color: white;
     font-size: 1.1rem;
     outline: none;
-    transition: border-color 0.3s;
-    width: 95%;
-    margin: 0 auto;
+    transition: border-bottom-color 0.3s ease;
 }
 
-input:focus {
+/* Animación de la label cuando el input está en foco o tiene contenido */
+.form-group input:focus ~ label,
+.form-group input:valid ~ label {
+    top: -20px;
+    font-size: 0.85rem;
+    color: white;
+}
+
+/* Animación de la barra inferior */
+.form-group::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0.3rem;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+    width: 95%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.form-group input:focus ~ ::after {
+    transform: scaleX(1);
+}
+
+/* Animación de la barra cuando el input está en foco */
+.form-group input:focus {
     border-bottom-color: white;
 }
+
+/* ... (mantener el resto de los estilos igual) ... */
 
 .button-design {
     background-color: transparent;
@@ -120,19 +149,35 @@ input:focus {
 }
 
 .register-link {
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.9rem;
-    position: absolute;
-    bottom: 25px;
-    left: 25px;
-    z-index: 2;
-    transition: opacity 0.3s;
+    text-align: center;
+    display: block;
+    font-size: 14px;
+    position: relative;
+    padding: 5px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    z-index: 1000;
 }
 
 .register-link:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+    color: white;
+    transform: translateY(-2px);
+    animation: glow 0.3s ease-in-out forwards;
+}
+
+.register-link:active {
+    transform: translateY(0);
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    to {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
 }
 
 .login-container::after {
@@ -146,25 +191,7 @@ input:focus {
     z-index: 1;
 }
 
-/* Estilos para las alertas */
-.alert-error, .alert-success {
-    margin: 0 auto 1rem auto;
-    padding: 1rem;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-
-.alert-error{
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: rgba(255, 0, 0, 0.1);
-    border: 1px solid rgba(255, 0, 0, 0.3);
-    transition: transform 0.5s ease;
-}
-
+/* Estilos para las alertas y notificaciones */
 .notification {
     position: absolute;
     top: 20px;
@@ -172,7 +199,20 @@ input:focus {
     color: rgb(255, 255, 255);
 }
 
-.alert-success{
+.alert-error {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    transition: transform 0.5s ease;
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.alert-success {
     padding: 0.5rem;
     width: fit-content;
     background-color: rgba(0, 255, 0, 0.1);
@@ -180,11 +220,11 @@ input:focus {
     transition: transform 0.5s ease;
 }
 
-.show{
+.show {
     transform: translateX(-220px);
 }
 
-
+/* Media Queries */
 @media screen and (min-width: 375px) {
     .login-container {
         width: 83.5%;
@@ -192,82 +232,26 @@ input:focus {
         padding: 2.5rem;
     }
 
-    .button-design{
+    .button-design {
         margin-bottom: 0;
     }
 
-
-    .register-link{
+    .register-link {
         color: #f5f5f5;
-        left: 15px;
-        bottom: 35px;
+        bottom: 0;
         display: inline-block;
         width: fit-content;
     }
-    .form{
+
+    .form {
         margin-bottom: 3.5rem;
-    }
-    .input{
-        height: 27px;
-    }
-
-}
-
-
-@media screen and (min-width: 475px) {
-    .login-container {
-        width: 83.5%;
-        min-height: 67vh;
-        padding: 2.5rem;
-    }
-
-    .form{
-        margin-bottom: 3.5rem;
-    }
-
-    .input{
-        height: 27px;
-    }
-
-    .button-design{
-        font-size: 1.2rem;
-    }
-
-
-    .register-link{
-        color: #f5f5f5;
-        left: 15px;
-        bottom: 35px;
-        display: inline-block;
-        width: fit-content;
     }
 }
 
 @media screen and (min-width: 530px) {
     .login-container {
         width: 63%;
-        min-height: 67vh;
-        padding: 2.5rem;
     }
-
-    .button-design{
-        font-size: 1.2rem;
-        margin-bottom: 0;
-    }
-
-
-    .register-link{
-        color: #f5f5f5;
-        left: 30px;
-        bottom: 35px;
-        display: inline-block;
-        width: fit-content;
-    }
-
-    .form{
-        margin-bottom: 3.5rem;
-    }
-
 
     .logo {
         font-size: 1.5rem;
@@ -275,29 +259,14 @@ input:focus {
 
     h1 {
         font-size: 1.5rem;
-    }
-
-    input {
-        height: 27px;
-        font-size: 1rem;
     }
 }
 
-
-
 @media screen and (min-width: 768px) {
     .login-container {
-        width: 63%;
+        width: 50%;
         max-width: calc(63% + 50px);
-        min-height: 67vh;
-        padding: 2.5rem;
     }
-
-    .button-design{
-        font-size: 1.2rem;
-        margin-bottom: 0;
-    }
-
 
     .logo {
         font-size: 1.75rem;
@@ -307,35 +276,16 @@ input:focus {
         font-size: 1.75rem;
     }
 
-    input {
-        height: 27px;
-        font-size: 1.15rem;
-    }
-
-    .register-link{
-        left: 30px;
+    .register-link {
         font-size: 1rem;
     }
-
-    .form{
-        margin-bottom: 3.5rem;
-    }
-
-
 }
 
 @media screen and (min-width: 1024px) {
     .login-container {
         width: 63%;
         max-width: 450px;
-        min-height: 67vh;
-        padding: 2.5rem;
     }
-
-    .button-design{
-        margin: 1rem auto 4rem auto;
-    }
-
 
     .logo {
         font-size: 2rem;
@@ -345,19 +295,9 @@ input:focus {
         font-size: 2rem;
     }
 
-    input {
-        height: 27px;
-        font-size: 1.2rem;
-    }
-
     .button-design {
         width: 200px;
         font-size: 1.2rem;
-    }
-
-    .register-link{
-        bottom: 30px;
-        left: 30px;
     }
 }
 
@@ -365,11 +305,5 @@ input:focus {
     .login-container {
         width: 25%;
         max-width: 550px;
-        min-height: 67vh;
-    }
-
-    .register-link{
-        color: #f5f5f5;
-        bottom: 30px;
     }
 }

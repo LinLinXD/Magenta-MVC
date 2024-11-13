@@ -1,0 +1,75 @@
+.whatsapp-button {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(45deg, #FF00FF, #800080);  /* Gradiente magenta */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.3);  /* Sombra magenta */
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.whatsapp-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);  /* Sombra magenta más intensa en hover */
+}
+
+.whatsapp-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.3);
+}
+
+.whatsapp-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 50%;
+}
+
+/* Versión móvil */
+@media (max-width: 768px) {
+    .whatsapp-button {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+    }
+
+    .whatsapp-button span {
+        display: none;
+    }
+
+    .whatsapp-icon {
+        padding: 6px;
+    }
+}
+
+/* Animación de pulso en magenta */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 255, 0);
+    }
+}
+
+.whatsapp-button {
+    animation: pulse 2s infinite;
+}
+
+.whatsapp-button:hover {
+    animation: none;
+}

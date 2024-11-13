@@ -14,8 +14,9 @@ public class WebConfig implements WebMvcConfigurer {
     public WebConfig(AuthInterceptor authInterceptor) {
         this.authInterceptor = authInterceptor;
     }
+
     @Override
-    public void addViewControllers(ViewControllerRegistry registry){
+    public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", "/home");
     }
 
@@ -28,28 +29,36 @@ public class WebConfig implements WebMvcConfigurer {
                         "/js/**",
                         "/images/**",
                         "/login.css",
-                        "/home.css"
+                        "/home.css",
+                        "/uploads/**"
                 );
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Configuración explícita para recursos estáticos
+        // Para recursos estáticos en el classpath
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("classpath:/static/images/")
+                .setCachePeriod(3600);
+
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/static/css/")
                 .setCachePeriod(3600);
+
 
         registry.addResourceHandler("/js/**")
                 .addResourceLocations("classpath:/static/js/")
                 .setCachePeriod(3600);
 
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("classpath:/static/images/")
+        // Para archivos en la raíz de static
+        registry.addResourceHandler("/*.css")
+                .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600);
 
-        // Para archivos en la raíz de static
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
+        // Para archivos subidos
+        String uploadPath = System.getProperty("user.dir") + "/uploads/";
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:" + uploadPath)
                 .setCachePeriod(3600);
     }
 }

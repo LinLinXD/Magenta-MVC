@@ -1,10 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+
+    <link rel="stylesheet" th:href="@{/css/modify-css/modify-user.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <body>
+<div class="modify-container">
+    <div class="back-button">
+        <a href="/home">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+    </div>
 
+    <div class="profile-header">
+        <h1>Editar Perfil</h1>
+        <div class="profile-image-section">
+            <div class="profile-image-container">
+                <!-- Imagen de perfil con fallback -->
+                <img th:src="${session.PROFILE_IMAGE_URL != null ?
+                       session.PROFILE_IMAGE_URL :
+                       '/images/default-profile-picture.png'}"
+                     alt="Imagen de perfil"
+                     id="profileImage"
+                     class="profile-image"
+                     onerror="this.src='/images/default-profile-picture.png'">
+                <div class="image-overlay">
+                    <span class="material-symbols-outlined">photo_camera</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/modifyUser}"
+          th:object="${modifyUserDTO}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="modify-form">
+
+        <div th:if="${successMessage}" class="alert success" th:text="${successMessage}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <div class="form-group">
+            <label for="name">Nombre</label>
+            <div class="input-container">
+                <input type="text"
+                       id="name"
+                       th:field="*{name}"
+                       placeholder="Tu nombre" required>
+                <span class="material-symbols-outlined">edit</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-container">
+                <input type="email"
+                       id="email"
+                       th:field="*{email}"
+                       placeholder="tu@email.com" required>
+                <span class="material-symbols-outlined">edit</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Teléfono</label>
+            <div class="input-container">
+                <input type="tel"
+                       id="phone"
+                       th:field="*{phone}"
+                       placeholder="Tu teléfono">
+                <span class="material-symbols-outlined">edit</span>
+            </div>
+        </div>
+
+        <!-- Input para la imagen de perfil -->
+        <input type="file"
+               name="profileImage"
+               id="imageInput"
+               accept="image/*"
+               style="display: none;">
+
+        <div class="form-actions">
+            <button type="button" class="cancel-button" onclick="window.location.href='/home'">Cancelar</button>
+            <button type="submit" class="save-button">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('imageInput');
+        const profileImage = document.getElementById('profileImage');
+        const profileImageContainer = document.querySelector('.profile-image-container');
+
+        // Activar el selector de archivo al hacer click en la imagen
+        profileImageContainer.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Manejar la selección de imagen
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validar tipo de archivo
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor selecciona una imagen válida');
+                    return;
+                }
+
+                // Validar tamaño (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen no debe superar los 5MB');
+                    return;
+                }
+
+                // Mostrar preview de la imagen
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                    console.log('Vista previa de imagen cargada');
+                }
+                reader.onerror = function(e) {
+                    console.error('Error al leer el archivo:', e);
+                    profileImage.src = '/images/default-profile-picture.png';
+                    alert('Error al cargar la imagen');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Manejar errores de carga de imagen
+        profileImage.addEventListener('error', function(e) {
+            console.error('Error al cargar la imagen:', e);
+            this.src = '/images/default-profile-picture.png';
+        });
+
+        // Función para verificar si una cadena es una URL de datos base64 válida
+        function isValidBase64Image(str) {
+            return str && str.startsWith('data:image/');
+        }
+
+        // Verificar la imagen actual
+        const currentSrc = profileImage.getAttribute('src');
+        if (!isValidBase64Image(currentSrc) && currentSrc !== '/images/default-profile-picture.png') {
+            console.log('Usando imagen por defecto debido a fuente inválida');
+            profileImage.src = '/images/default-profile-picture.png';
+        }
+    });
+</script>
 </body>
 </html>

@@ -5,13 +5,23 @@
     padding: 0;
     box-sizing: border-box;
     color: inherit;
-
+    font-family: Roboto, sans-serif;
 }
 
 :root{
     --var-hero-image-height: 100vh;
-    --header-bg-color: transparent;
     --header-opacity: 0;
+    --magenta-50: #fff2fe;
+    --magenta-100: #ffe3fe;
+    --magenta-200: #ffc6fd;
+    --magenta-300: #ff99f6;
+    --magenta-400: #ff5def;
+    --magenta-500: #ff21f2;
+    --magenta-600: #ff00ff;
+    --magenta-700: #cf00ca;
+    --magenta-800: #a900a3;
+    --magenta-900: #890682;
+    --magenta-950: #5e005a;
 }
 
 html {
@@ -33,7 +43,7 @@ body {
     align-items: center;
     padding: 0 1rem;
     z-index: 1000;
-    background: transparent; /* El header base es transparente */
+    background: transparent;
 }
 
 .header::before {
@@ -44,7 +54,7 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, #FF0080, #800080);
-    opacity: var(--header-opacity, 1); /* Usamos opacity en lugar de background */
+    opacity: var(--header-opacity, 1);
     transition: opacity 0.3s ease;
     z-index: -1;
 }
@@ -76,7 +86,6 @@ body {
     justify-content: center;
 }
 
-/* Línea del medio */
 .burger-inner {
     position: absolute;
     width: 100%;
@@ -85,7 +94,6 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* Líneas superior e inferior usando pseudo-elementos */
 .burger-inner::before,
 .burger-inner::after {
     content: '';
@@ -105,7 +113,6 @@ body {
     bottom: -6px;
 }
 
-/* Animación cuando está activo */
 .burger-icon.active .burger-inner {
     background-color: transparent;
 }
@@ -128,17 +135,139 @@ body {
 
 .usuario {
     display: flex;
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
     height: 100%;
 }
 
+/* Estilos para el perfil */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
 
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    background-color: #f0f0f0;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-username {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.profile-separator {
+    width: 80%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 1rem 0;
+}
+
+
+.profile-option {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.profile-option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-option i {
+    width: 20px;
+    color: white;
+}
+
+.profile-option a span{
+    color: white;
+}
+
+.nav{
+    display: flex;
+    margin: 0 auto;
+    margin-top: 1rem;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Para la página de modificación */
+.profile-image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 0 auto;
+    border: 3px solid var(--primary-color);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-overlay:hover {
+    opacity: 1;
+}
+
+.image-overlay .material-symbols-outlined {
+    color: white;
+    font-size: 2rem;
+}
+
+.logo-image {
+    height: calc(3vh + 1rem); /* Ajusta esto según el tamaño que necesites */
+    width: auto;
+    object-fit: contain; /* Mantiene la proporción de la imagen */
+}
 
 @media screen and (min-width: 375px) {
     .header {
         color: #FFF;
         justify-content: space-between;
-        background-color: var(--header-b-color);
         box-shadow: 1px 1px 1px rgba(70, 70, 70, 0.1);
     }
 
@@ -159,38 +288,36 @@ body {
         height: 100%;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
-        z-index: 1001; /* Asegura que esté sobre el menú */
+        z-index: 1001;
     }
 
-    /* Menú fullscreen */
     .header-sections {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100vh;
-        background-color: rgb(186, 42, 174); /* Color Magenta */
+        background-color: var(--magenta-800);
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        padding: 2rem;
+        padding: 4rem 2rem;
         transform: translateY(-100%);
         transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
     }
 
-    /* Cuando está activo */
     .header-sections.active {
         transform: translateY(0);
     }
 
-    /* Ajustes para los items del menú */
     .header-sections .header-items {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 2rem;
-        margin-top: 2rem;
+        margin-top: auto;
+        padding-bottom: 4rem;
     }
 
     .header-sections .header-items li {
@@ -206,58 +333,77 @@ body {
         transform: translateY(0);
     }
 
-    /* Retraso escalonado para cada item */
     .header-sections .header-items li:nth-child(1) { transition-delay: 0.1s; }
     .header-sections .header-items li:nth-child(2) { transition-delay: 0.2s; }
     .header-sections .header-items li:nth-child(3) { transition-delay: 0.3s; }
     .header-sections .header-items li:nth-child(4) { transition-delay: 0.4s; }
+    .header-sections .header-items li:nth-child(5) { transition-delay: 0.5s; }
+
 
     .header-sections .usuario {
+        width: 100%;
         margin-bottom: 2rem;
         color: white;
         font-size: 1.2rem;
     }
+
+    .profile-section {
+        margin-top: 2rem;
+    }
+
+    .header-items-pc{
+        display: none;
+    }
 }
 
 @media screen and (min-width: 768px) {
-    .header {
-        padding: 0 2rem;
+
+    .logo-image {
+        height: calc(3vh + 1.5rem);
     }
 
-    .header-burger-list {
+    .header-sections, .header-burger-list{
         display: none;
     }
 
-    .header-items {
+    .header{
+        padding: 0 2rem;
+    }
+
+    .header-logo{
+        padding: 0;
+        width: 40%;
+        justify-content: flex-start;
+    }
+
+    .header-items-pc{
+        width: 50%;
+        height: inherit;
         display: flex;
         flex-direction: row;
+
     }
 
-    .header-sections {
-        position: relative;
-        transform: none;
-        width: auto;
-        height: 100%;
-        padding: 0;
+    .header-items-pc ul{
+        height: inherit;
+        width: 100%;
+        list-style-type: none;
+        display: flex;
+        align-items: center;
         flex-direction: row;
-        background-color: transparent;
-        justify-content: flex-end;
+        justify-content: space-around;
+
     }
 
-    .header-sections .header-items {
-        margin-top: 0;
+    .header-button{
+        width: 10%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: inherit;
     }
 
-    .header-sections .header-items li {
-        font-size: 1rem;
-        color: inherit;
-        opacity: 1;
-        transform: none;
-    }
 
-    .header-sections .usuario {
-        margin-bottom: 0;
-        color: inherit;
-        font-size: 1rem;
-    }
+
+
 }

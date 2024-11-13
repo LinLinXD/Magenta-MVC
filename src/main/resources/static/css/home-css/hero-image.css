@@ -1,15 +1,107 @@
+:root{
+    --var-header-font-size: 39px;
+    --var-p-font-size: 20px;
+}
+
 .hero-image-container{
+    position: relative;
     width: 100%;
-    display: flex;
     height: var(--var-hero-image-height);
     background-image: linear-gradient(
-            rgba(255, 0, 255, 0.3), /* Color magenta con opacidad */
-            rgba(128, 0, 128, 0.3)  /* Color púrpura con opacidad */
+            rgba(137, 6, 130, 0.7), /* Color magenta con opacidad */
+            rgba(94, 0, 90, 0.7)  /* Color púrpura con opacidad */
     ), url("../../images/hero-image-magenta.jpg");
     background-size: cover;
     background-position: center;
 }
 
+
+.button-description {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding: 10px 25px;  /* Reducido el padding para hacerlo más pequeño */
+    background-color: transparent; /* Quitado el color de fondo */
+    border: 2px solid white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.button-description span {
+    color: white;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;  /* Reducido el tamaño de fuente */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.button-description:hover {
+    background-color: white;
+}
+
+.button-description:hover span {
+    color: #8B008B;
+}
+
+.button-description:active {
+    transform: translateY(1px);
+}
 @media screen and (min-width: 375px) {
 
+
+    .description{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        margin: auto;
+        color: white;
+        background-color: var(--magenta-950);
+        font-size: 1.5rem;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .description h1{
+        width:100%;
+        font-size: clamp(
+                33px,
+                calc(14px + (18 - 14) * ((100vw - 320px) / (1170 - 320))),
+                39px
+        );
+    }
+
+    .description p{
+        margin: 1rem 0;
+        width: 80%;
+        font-size: clamp(
+                20px,
+                calc(14px + (18 - 14) * ((100vw - 320px) / (1170 - 320))),
+                24px
+        );
+    }
+
+}
+
+@media  screen and (min-width: 768px) {
+    .description{
+        font-size: 2rem;
+    }
+
+    .description {
+        top: 10%;
+        left: 2.5%;
+        width: 50%;
+        max-width: 600px;
+        height: 350px;
+        color: white;
+        background-color: var(--magenta-950);
+        text-align: center;
+        padding: 1rem;
+
+    }
 }

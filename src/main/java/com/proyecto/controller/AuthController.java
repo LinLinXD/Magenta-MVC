@@ -1,21 +1,23 @@
 package com.proyecto.controller;
 
+import com.proyecto.aspects.RequireRole;
 import com.proyecto.client.AuthClient;
 import com.proyecto.dto.AuthDTO;
 import com.proyecto.dto.LoginDTO;
+import com.proyecto.dto.ModifyUserDTO;
 import com.proyecto.dto.RegisterDTO;
-import feign.FeignException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class AuthController {
     private final AuthClient authClient;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private static final String DEFAULT_PROFILE_IMAGE = "/images/default-profile-picture.png";
+    private static final String BACKEND_URL = "http://localhost:8080"; // URL de tu backend
 
 
     @GetMapping("/login")
@@ -31,41 +35,98 @@ public class AuthController {
         model.addAttribute("loginDTO", new LoginDTO());
         return "login";
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/home?logout=true";
+    }
+
+
+    @GetMapping("/home")
+    public String home(HttpSession session, Model model) {
+        String username = (String) session.getAttribute("USERNAME");
+        if (username != null) {
+            try {
+                AuthDTO userInfo = authClient.getUserInfo(username);
+
+                // Información básica del usuario
+                model.addAttribute("username", username);
+                model.addAttribute("userRoles", session.getAttribute("USER_ROLES"));
+
+                // Manejo de la imagen de perfil
+                String profileImageUrl = null;
+
+                // Primero intentar obtener la imagen de la sesión
+                String sessionImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
+                if (sessionImageUrl != null && !sessionImageUrl.isEmpty()) {
+                    profileImageUrl = sessionImageUrl;
+                }
+                // Si no hay imagen en sesión, usar la del userInfo
+                else if (userInfo.getProfileImageUrl() != null && !userInfo.getProfileImageUrl().isEmpty()) {
+                    profileImageUrl = userInfo.getProfileImageUrl();
+                    // Actualizar la sesión con la imagen actual
+                    session.setAttribute("PROFILE_IMAGE_URL", profileImageUrl);
+                }
+
+                // Si no hay imagen, usar la imagen por defecto
+                if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+                    profileImageUrl = "/images/default-profile-picture.png";
+                }
+
+                model.addAttribute("profileImageUrl", profileImageUrl);
+                model.addAttribute("defaultImageUrl", "/images/default-profile-picture.png");
+
+                // Agregar información adicional del usuario si es necesario
+                model.addAttribute("userInfo", userInfo);
+
+            } catch (Exception e) {
+                logger.error("Error al obtener información del usuario: {}", e.getMessage());
+                // En caso de error, establecer la imagen por defecto
+                model.addAttribute("profileImageUrl", "/images/default-profile-picture.png");
+            }
+        }
+        return "/home";
+    }
+
+
     @PostMapping("/login")
     public String processLogin(@ModelAttribute LoginDTO loginDTO,
-                               HttpSession session, Model model) {
+                               HttpSession session,
+                               Model model) {
         try {
             AuthDTO response = authClient.login(loginDTO);
+            model.addAttribute("RegisterDTO", new RegisterDTO());
 
-            // Guardamos el token
+            // Guardar el token y la información básica
             session.setAttribute("JWT_TOKEN", response.getToken());
             session.setAttribute("USERNAME", response.getUsername());
 
-            // Aseguramos que los roles están en el formato correcto (con el prefijo ROLE_)
-            Set<String> formattedRoles = response.getRoles().stream()
-                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
-                    .collect(Collectors.toSet());
+            // Guardar la URL de la imagen de perfil si está disponible
+            if (response.getProfileImageUrl() != null) {
+                session.setAttribute("PROFILE_IMAGE_URL", response.getProfileImageUrl());
+            }
 
+            // Manejar los roles de manera segura
+            Set<String> formattedRoles = new HashSet<>();
+            if (response.getRoles() != null) {
+                formattedRoles = response.getRoles().stream()
+                        .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                        .collect(Collectors.toSet());
+            } else {
+                // Si no hay roles, al menos agregar un rol por defecto
+                formattedRoles.add("ROLE_USER");
+            }
             session.setAttribute("USER_ROLES", formattedRoles);
-
-            logger.debug("Roles guardados en sesión: {}", formattedRoles);
 
             return "redirect:/home";
 
-        } catch (FeignException e) {
-            logger.error("Error en login: ", e);
+        } catch (Exception e) {
             model.addAttribute("error", "Credenciales inválidas");
             return "/login";
         }
     }
 
-
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login?logout=true";
-    }
 
 
     @GetMapping("/register")
@@ -78,10 +139,23 @@ public class AuthController {
     public String processRegister(@ModelAttribute RegisterDTO registerDTO,
                                   RedirectAttributes redirectAttributes) {
         try {
-            authClient.register(registerDTO);
-            redirectAttributes.addFlashAttribute("success", "Registro exitoso. Por favor inicia sesión.");
-            return "redirect:/login";
-        } catch (FeignException e) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+
+            AuthDTO response = authClient.register(registerDTO);
+
+            if (response != null && response.getError() == null) {
+                redirectAttributes.addFlashAttribute("success", "Registro exitoso. Por favor inicia sesión.");
+                return "redirect:/login";
+            } else {
+                String error = response != null && response.getError() != null ?
+                        response.getError() : "Error desconocido en el registro";
+                redirectAttributes.addFlashAttribute("error", error);
+                return "redirect:/register";
+            }
+        } catch (Exception e) {
+
             redirectAttributes.addFlashAttribute("error", "Error en el registro: " + e.getMessage());
             return "redirect:/register";
         }
@@ -89,10 +163,57 @@ public class AuthController {
 
 
 
-    @GetMapping("/home")
-    public String home(HttpSession session, Model model) {
+    @PostMapping("/modifyUser")
+    public String modifyUser(@ModelAttribute ModifyUserDTO modifyUserDTO,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes) {
         String username = (String) session.getAttribute("USERNAME");
-        model.addAttribute("username", username);
-        return "/home";
+        if (username == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            logger.debug("📤 Enviando solicitud de modificación para usuario: {} con imagen: {}",
+                    username,
+                    modifyUserDTO.getProfileImage() != null ?
+                            modifyUserDTO.getProfileImage().getSize() : "null");
+
+            AuthDTO response = authClient.modifyUser(
+                    modifyUserDTO.getName(),
+                    modifyUserDTO.getEmail(),
+                    modifyUserDTO.getPhone(),
+                    username,
+                    modifyUserDTO.getProfileImage()
+            );
+
+            if (response != null) {
+                if (response.getProfileImageUrl() != null) {
+                    // Guardar la imagen en la sesión
+                    session.setAttribute("PROFILE_IMAGE_URL", response.getProfileImageUrl());
+                    logger.debug("🖼️ Imagen guardada en sesión: {} caracteres",
+                            response.getProfileImageUrl().length());
+                }
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Perfil actualizado correctamente");
+            }
+
+            return "redirect:/modifyUser";
+        } catch (Exception e) {
+            logger.error("Error al actualizar el perfil: ", e);
+            redirectAttributes.addFlashAttribute("error",
+                    "Error al actualizar el perfil: " + e.getMessage());
+            return "redirect:/modifyUser";
+        }
     }
+
+    @GetMapping("/modifyUser")
+    public String showModifyUserForm(Model model, HttpSession session) {
+        // Verificar si hay una imagen en la sesión
+        String profileImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
+        ModifyUserDTO modifyUserDTO = new ModifyUserDTO();
+        model.addAttribute("modifyUserDTO", modifyUserDTO);
+        model.addAttribute("currentProfileImage", profileImageUrl);
+        return "modifyUser";
+    }
+
 }

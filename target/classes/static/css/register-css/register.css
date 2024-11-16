@@ -15,6 +15,10 @@ body {
     padding: 15px;
 }
 
+input:-webkit-autofill{
+    background-color: transparent !important;
+}
+
 .card {
     background: #A900A3FF;
     width: 100%;

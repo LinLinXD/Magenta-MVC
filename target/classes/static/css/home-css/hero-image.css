@@ -1,6 +1,17 @@
 :root{
     --var-header-font-size: 39px;
     --var-p-font-size: 20px;
+    --magenta-50: #fff2fe;
+    --magenta-100: #ffe3fe;
+    --magenta-200: #ffc6fd;
+    --magenta-300: #ff99f6;
+    --magenta-400: #ff5def;
+    --magenta-500: #ff21f2;
+    --magenta-600: #ff00ff;
+    --magenta-700: #cf00ca;
+    --magenta-800: #a900a3;
+    --magenta-900: #890682;
+    --magenta-950: #5e005a;
 }
 
 .hero-image-container{
@@ -12,7 +23,8 @@
             rgba(94, 0, 90, 0.7)  /* Color púrpura con opacidad */
     ), url("../../images/hero-image-magenta.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center
+
 }
 
 
@@ -60,7 +72,7 @@
         width: 100%;
         margin: auto;
         color: white;
-        background-color: var(--magenta-950);
+        background-color: #5E005AFF;
         font-size: 1.5rem;
         text-align: center;
         padding: 1rem;
@@ -99,7 +111,7 @@
         max-width: 600px;
         height: 350px;
         color: white;
-        background-color: var(--magenta-950);
+        background-color: #5E005AFF;
         text-align: center;
         padding: 1rem;
 

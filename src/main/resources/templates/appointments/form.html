@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Cita</title>
+    <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
+    <link rel="stylesheet" th:href="@{/css/form-css/form.css?v=1}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+<nav th:replace="~{fragments/nav}"></nav>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>Agendar [[${eventType.displayName}]]</h1>
+        <p class="subtitle">Por favor complete todos los campos requeridos</p>
+    </div>
+
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+    <form th:action="@{/appointments/new}" method="post" th:object="${createAppointmentDTO}" class="appointment-form">
+        <input type="hidden" name="eventType" th:value="${eventType}"/>
+
+        <!-- Selección de Horario -->
+        <div class="form-section">
+            <h2>Horario Disponible</h2>
+            <div class="time-slots">
+                <div th:each="slot : ${timeSlots}" class="time-slot">
+                    <input type="radio"
+                           th:field="*{appointmentDateTime}"
+                           th:value="${#temporals.format(slot.startTime, 'yyyy-MM-dd''T''HH:mm')}"
+                           th:id="${'slot-' + slot.startTime.getHour()}"
+                           th:disabled="${!slot.available}"
+                           required/>
+                    <label th:for="${'slot-' + slot.startTime.getHour()}"
+                           th:class="${!slot.available ? 'unavailable' : ''}"
+                           th:text="${#temporals.format(slot.startTime, 'HH:mm')}">
+                    </label>
+                    <span class="unavailable-reason"
+                          th:if="${!slot.available}"
+                          th:text="${slot.unavailableReason}">
+            </span>
+                </div>
+            </div>
+            <input type="hidden" th:field="*{eventType}" />
+        </div>
+
+        <!-- Cuestionario -->
+        <div class="form-section">
+            <h2>Detalles del Evento</h2>
+            <div th:each="question : ${questions}" class="question-group">
+                <label th:for="${'question-' + question.id}"
+                       th:text="${question.questionText + (question.required ? ' *' : '')}">
+                </label>
+
+                <!-- Para preguntas de opción única -->
+                <div th:if="${question.questionType.name() == 'SINGLE_CHOICE'}"
+                     class="options-group single-choice">
+                    <div th:each="option : ${question.options}" class="option">
+                        <input type="hidden" th:name="'responses[' + ${questionStat.index} + '].questionId'" th:value="${question.id}" />
+                        <input type="radio"
+                               th:name="'responses[' + ${questionStat.index} + '].response'"
+                               th:value="${option.id}"
+                               th:id="${'option-' + option.id}"
+                               th:required="${question.required}"/>
+                        <label th:for="${'option-' + option.id}"
+                               th:text="${option.optionText}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Para preguntas de opción múltiple -->
+                <div th:if="${question.questionType.name() == 'MULTIPLE_CHOICE'}"
+                     class="options-group multiple-choice">
+                    <div th:each="option : ${question.options}" class="option">
+                        <input type="hidden" th:name="'responses[' + ${questionStat.index} + '].questionId'" th:value="${question.id}" />
+                        <input type="checkbox"
+                               th:name="'responses[' + ${questionStat.index} + '].response'"
+                               th:value="${option.id}"
+                               th:id="${'option-' + option.id}"/>
+                        <label th:for="${'option-' + option.id}"
+                               th:text="${option.optionText}">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Para preguntas de texto -->
+                <div th:if="${question.questionType.name() == 'TEXT'}"
+                     class="text-input">
+                    <input type="hidden" th:name="'responses[' + ${questionStat.index} + '].questionId'" th:value="${question.id}" />
+                    <textarea th:name="'responses[' + ${questionStat.index} + '].response'"
+                              th:required="${question.required}"
+                              rows="3"
+                              placeholder="Escriba su respuesta aquí"></textarea>
+                </div>
+
+                <!-- Para preguntas numéricas -->
+                <div th:if="${question.questionType.name() == 'NUMBER'}"
+                     class="number-input">
+                    <input type="hidden" th:name="'responses[' + ${questionStat.index} + '].questionId'" th:value="${question.id}" />
+                    <input type="number"
+                           th:name="'responses[' + ${questionStat.index} + '].response'"
+                           th:required="${question.required}"
+                           min="1"
+                           placeholder="Ingrese un número"/>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="form-actions">
+            <a th:href="@{/appointments}" class="btn-secondary">Cancelar</a>
+            <button type="submit" class="btn-primary">Agendar Cita</button>
+        </div>
+    </form>
+</div>
+
+<script th:src="@{/javascript/home-js/dropdown.js}"></script>
+
+</body>
+</html>

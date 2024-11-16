@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<nav th:fragment="nav" class="header">
+    <div class="header-burger-list">
+        <div class="burger-icon">
+            <span class="burger-inner"></span>
+        </div>
+    </div>
+
+    <div class="header-logo">
+        <a th:href="@{/home}">
+            <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" class="logo-image">
+                <!-- Definiciones de efectos -->
+                <defs>
+                    <filter id="softGlow">
+                        <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <pattern id="linePattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <line x1="0" y1="0" x2="10" y2="10" stroke="white" stroke-width="0.5" opacity="0.3"/>
+                    </pattern>
+                </defs>
+
+                <path d="M40,20 Q60,60 40,100 L80,100 Q100,60 80,20 Z"
+                      fill="none"
+                      stroke="white"
+                      stroke-width="1.5"
+                      opacity="0.8"
+                      filter="url(#softGlow)"/>
+
+                <g transform="translate(60,60)">
+                    <path d="M-15,-15 Q0,-30 15,-15 Q30,0 15,15 Q0,30 -15,15 Q-30,0 -15,-15"
+                          fill="none"
+                          stroke="white"
+                          stroke-width="1.5"
+                          opacity="0.9"/>
+                </g>
+
+                <text x="105" y="70"
+                      font-family="'Palatino Linotype', serif"
+                      font-size="48"
+                      fill="white"
+                      filter="url(#softGlow)"
+                      letter-spacing="2">MAGENTA</text>
+
+                <text x="105" y="90"
+                      font-family="'Roboto', sans-serif"
+                      font-size="14"
+                      fill="white"
+                      opacity="0.8"
+                      letter-spacing="4">EVENTOS</text>
+
+                <circle cx="60" cy="60" r="3" fill="white" opacity="0.8"/>
+            </svg>
+        </a>
+    </div>
+
+    <div class="header-sections">
+        <div class="usuario">
+            <div class="profile-section" th:if="${username != null}">
+                <div class="profile-image-container">
+                    <img th:src="${session.PROFILE_IMAGE_URL != null ?
+                            session.PROFILE_IMAGE_URL :
+                            '/images/default-profile-picture.png'}"
+                         alt="Imagen de perfil"
+                         id="profileImage-2"
+                         class="profile-image"
+                         onerror="this.src='/images/default-profile-picture.png'">
+                </div>
+                <span class="profile-username" th:text="${username}"></span>
+                <div class="profile-separator"></div>
+                <div class="profile-options">
+                    <a href="/modifyUser" class="profile-option">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Editar Perfil</span>
+                    </a>
+                    <a href="/logout" class="profile-option">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </div>
+            </div>
+            <div class="nav">
+                <div>
+                    <ul class="header-items">
+                        <li>Inicio</li>
+                        <li>Producto</li>
+                        <li>Contacto</li>
+                        <li>Nosotros</li>
+                        <li th:if="${username != null}"><a href="/appointments">Citas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-items-pc">
+        <ul>
+            <li>Inicio</li>
+            <li>Producto</li>
+            <li>Contacto</li>
+            <li>Nosotros</li>
+            <li th:if="${username != null}"><a href="/appointments">Citas</a></li>
+        </ul>
+    </div>
+
+    <div class="header-button">
+            <span th:if="${username == null}">
+                <button class="login-button">
+                    <a th:href="@{/login}">Login</a>
+                </button>
+            </span>
+
+        <!-- Contenedor del perfil con notificaciones -->
+        <div th:if="${username != null}" class="profile-container">
+                <span class="profile-trigger">
+                    <!-- Indicador de notificaciones -->
+                    <div th:if="${unreadNotificationsCount > 0}" class="notification-indicator">
+                        <span class="notification-count" th:text="${unreadNotificationsCount}"></span>
+                    </div>
+
+                    <img th:src="${session.PROFILE_IMAGE_URL != null ?
+                        session.PROFILE_IMAGE_URL :
+                        '/images/default-profile-picture.png'}"
+                         alt="Imagen de perfil"
+                         id="profileImage-1"
+                         class="nav-profile-image"
+                         onerror="this.src='/images/default-profile-picture.png'">
+                </span>
+
+            <div class="profile-dropdown">
+                <!-- Cabecera del dropdown -->
+                <div class="profile-header">
+                    <span th:text="${username}" class="profile-name"></span>
+                </div>
+
+                <!-- Sección de notificaciones -->
+                <div class="notifications-section">
+                    <div class="notifications-header">
+                        <span>Notificaciones</span>
+                    </div>
+
+                    <div class="notifications-list">
+                        <!-- Lista de notificaciones -->
+                        <div th:if="${notifications != null and !notifications.empty}"
+                             th:each="notification : ${notifications}"
+                             th:class="${'notification-item' + (notification.read ? '' : ' unread')}">
+
+                            <form th:if="${!notification.read}"
+                                  th:action="@{/notifications/{id}/read(id=${notification.id})}"
+                                  method="post"
+                                  style="display: none;">
+                                <input type="hidden" name="_method" value="PUT" />
+                            </form>
+
+                            <a th:if="${notification.appointmentId != null}"
+                               th:href="@{/appointments/{id}(id=${notification.appointmentId})}"
+                               class="notification-content">
+                                <div class="notification-title" th:text="${notification.message}"></div>
+                                <div class="notification-time"
+                                     th:text="${#temporals.format(notification.notificationTime, 'dd/MM/yyyy HH:mm')}">
+                                </div>
+                            </a>
+
+                            <div th:if="${notification.appointmentId == null}" class="notification-content">
+                                <div class="notification-title" th:text="${notification.message}"></div>
+                                <div class="notification-time"
+                                     th:text="${#temporals.format(notification.notificationTime, 'dd/MM/yyyy HH:mm')}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje cuando no hay notificaciones -->
+                        <div th:if="${notifications == null or notifications.empty}"
+                             class="notification-empty">
+                            No hay notificaciones
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Separador -->
+                <div class="dropdown-divider"></div>
+
+                <!-- Opciones del perfil -->
+                <div class="profile-options">
+                    <a th:href="@{/modifyUser}" class="profile-option-1">
+                        <span class="material-symbols-outlined">settings</span>
+                        Editar Perfil
+                    </a>
+                    <a th:href="@{/logout}" class="profile-option-1">
+                        <span class="material-symbols-outlined">logout</span>
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

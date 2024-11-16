@@ -1,11 +1,8 @@
 package com.proyecto.controller;
 
-import com.proyecto.aspects.RequireRole;
 import com.proyecto.client.AuthClient;
-import com.proyecto.dto.AuthDTO;
-import com.proyecto.dto.LoginDTO;
-import com.proyecto.dto.ModifyUserDTO;
-import com.proyecto.dto.RegisterDTO;
+import com.proyecto.client.NotificationClient;
+import com.proyecto.dto.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,18 +14,31 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthClient authClient;
+    private final NotificationClient notificationClient;  // Usar client en lugar de service
+
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private static final String DEFAULT_PROFILE_IMAGE = "/images/default-profile-picture.png";
     private static final String BACKEND_URL = "http://localhost:8080"; // URL de tu backend
 
+    @ModelAttribute
+    public void addNotificationAttributes(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("USERNAME");
+        if (username != null) {
+            try {
+                refreshNotifications(model, username);
+            } catch (Exception e) {
+                model.addAttribute("notifications", List.of());
+                model.addAttribute("unreadNotificationsCount", 0);
+            }
+        }
+    }
 
     @GetMapping("/login")
     public String loginPage(Model model) {
@@ -50,42 +60,39 @@ public class AuthController {
             try {
                 AuthDTO userInfo = authClient.getUserInfo(username);
 
-                // Información básica del usuario
+                // Agregar información básica del usuario
                 model.addAttribute("username", username);
                 model.addAttribute("userRoles", session.getAttribute("USER_ROLES"));
 
+                // Obtener y agregar notificaciones usando el client
+                List<AppointmentNotificationDTO> notifications =
+                        notificationClient.getUnreadNotifications(username);
+                model.addAttribute("notifications", notifications);
+                model.addAttribute("unreadNotificationsCount", notificationClient.getUnreadNotificationCount(username));
+
                 // Manejo de la imagen de perfil
                 String profileImageUrl = null;
-
-                // Primero intentar obtener la imagen de la sesión
                 String sessionImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
+
                 if (sessionImageUrl != null && !sessionImageUrl.isEmpty()) {
                     profileImageUrl = sessionImageUrl;
-                }
-                // Si no hay imagen en sesión, usar la del userInfo
-                else if (userInfo.getProfileImageUrl() != null && !userInfo.getProfileImageUrl().isEmpty()) {
+                } else if (userInfo.getProfileImageUrl() != null && !userInfo.getProfileImageUrl().isEmpty()) {
                     profileImageUrl = userInfo.getProfileImageUrl();
-                    // Actualizar la sesión con la imagen actual
                     session.setAttribute("PROFILE_IMAGE_URL", profileImageUrl);
                 }
 
-                // Si no hay imagen, usar la imagen por defecto
                 if (profileImageUrl == null || profileImageUrl.isEmpty()) {
                     profileImageUrl = "/images/default-profile-picture.png";
                 }
 
                 model.addAttribute("profileImageUrl", profileImageUrl);
-                model.addAttribute("defaultImageUrl", "/images/default-profile-picture.png");
-
-                // Agregar información adicional del usuario si es necesario
                 model.addAttribute("userInfo", userInfo);
-
             } catch (Exception e) {
                 logger.error("Error al obtener información del usuario: {}", e.getMessage());
-                // En caso de error, establecer la imagen por defecto
                 model.addAttribute("profileImageUrl", "/images/default-profile-picture.png");
             }
         }
+
         return "/home";
     }
 
@@ -214,6 +221,36 @@ public class AuthController {
         model.addAttribute("modifyUserDTO", modifyUserDTO);
         model.addAttribute("currentProfileImage", profileImageUrl);
         return "modifyUser";
+    }
+
+    @GetMapping("/refreshNotifications")
+    @ResponseBody
+    public Map<String, Object> refreshNotifications(HttpSession session) {
+        String username = (String) session.getAttribute("USERNAME");
+        Map<String, Object> response = new HashMap<>();
+
+        if (username != null) {
+            try {
+                var notifications = notificationClient.getUnreadNotifications(username);
+                response.put("notifications", notifications);
+                response.put("count", notifications.size());
+                response.put("success", true);
+            } catch (Exception e) {
+                response.put("success", false);
+                response.put("error", "Error al refrescar notificaciones");
+            }
+        }
+
+        return response;
+    }
+
+    private void refreshNotifications(Model model, String username) {
+        var notifications = notificationClient.getUnreadNotifications(username);
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadNotificationsCount", notifications.size());
+
+        // También guardamos en sesión para acceso rápido
+        model.addAttribute("hasUnreadNotifications", notifications.size() > 0);
     }
 
 }

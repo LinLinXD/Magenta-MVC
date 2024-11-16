@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Tipo de Evento</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" th:href="@{/css/select-event-type/select-event-type.css?v=1}">
+    <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<div class="select-event-container">
+    <div class="select-event-header">
+        <h1>Seleccionar Tipo de Evento</h1>
+        <p class="subtitle">¿Qué tipo de evento deseas organizar?</p>
+    </div>
+
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+    <div class="event-types-grid">
+        <div th:each="type : ${eventTypes}" class="event-type-card">
+            <a th:href="@{/appointments/new(eventType=${type})}" class="event-type-link">
+                <div class="event-icon">
+                        <span th:class="'material-icons'"
+                              th:text="${
+                                type.name() == 'WEDDING' ? 'favorite' :
+                                type.name() == 'SWEET_FIFTEEN' ? 'cake' :
+                                type.name() == 'COMMUNION' ? 'church' :
+                                type.name() == 'BAPTISM' ? 'water_drop' :
+                                type.name() == 'CORPORATE' ? 'business' : 'event'
+                              }">
+                        </span>
+                </div>
+                <h2 th:text="${type.displayName}"></h2>
+                <p class="event-description" th:text="${T(com.proyecto.util.EventDescriptionUtil).getEventDescription(type)}">
+                    Descripción del evento
+                </p>
+            </a>
+        </div>
+    </div>
+
+    <div class="back-button">
+        <a th:href="@{/appointments}" class="btn-secondary">
+            <span class="material-icons">arrow_back</span>
+            Volver
+        </a>
+    </div>
+</div>
+
+
+<script th:src="@{/javascript/home-js/dropdown.js}"></script>
+</body>
+</html>

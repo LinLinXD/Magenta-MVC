@@ -1,6 +1,7 @@
 package com.proyecto.controller;
 
 import com.proyecto.client.AppointmentClient;
+import com.proyecto.client.NotificationClient;
 import com.proyecto.dto.*;
 import com.proyecto.util.EventDescriptionUtil;
 import feign.FeignException;
@@ -29,6 +30,32 @@ import java.util.List;
 @Slf4j
 public class AppointmentViewController {
     private final AppointmentClient appointmentClient;
+    private final NotificationClient notificationClient;
+
+    @ModelAttribute
+    public void addNotificationAttributes(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("USERNAME");
+        if (username != null) {
+            try {
+                List<AppointmentNotificationDTO> notifications = notificationClient.getUnreadNotifications(username);
+                if (notifications != null) {
+                    // Contar solo las notificaciones enviadas y no leídas
+                    long unreadCount = notifications.stream()
+                            .filter(n -> n.isSent() && !n.isRead())
+                            .count();
+
+                    model.addAttribute("notifications", notifications);
+                    model.addAttribute("unreadNotificationsCount", unreadCount);
+                } else {
+                    model.addAttribute("notifications", new ArrayList<>());
+                    model.addAttribute("unreadNotificationsCount", 0);
+                }
+            } catch (Exception e) {
+                model.addAttribute("notifications", new ArrayList<>());
+                model.addAttribute("unreadNotificationsCount", 0);
+            }
+        }
+    }
 
     @GetMapping
     public String showAppointmentsIndex(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -38,6 +65,7 @@ public class AppointmentViewController {
         }
 
         try {
+
             // Para la página principal, mostramos las próximas citas y tipos de eventos disponibles
             List<EventType> eventTypes = Arrays.asList(EventType.values());
             model.addAttribute("eventTypes", eventTypes);
@@ -63,6 +91,8 @@ public class AppointmentViewController {
         }
 
         try {
+            model.addAttribute("username", username);
+
             YearMonth currentMonth = YearMonth.now();
             LocalDate firstDay = currentMonth.atDay(1);
             LocalDate lastDay = currentMonth.atEndOfMonth();

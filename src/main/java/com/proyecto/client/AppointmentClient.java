@@ -36,4 +36,7 @@ public interface AppointmentClient {
 
     @GetMapping("/questionnaire/questions/{eventType}")
     List<QuestionnaireQuestionDTO> getQuestionsByEventType(@PathVariable EventType eventType);
+
+    @GetMapping("/admin/appointments")
+    List<AppointmentDTO> getAllAppointments();
 }

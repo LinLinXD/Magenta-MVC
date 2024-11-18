@@ -32,9 +32,21 @@ public class AuthController {
         String username = (String) session.getAttribute("USERNAME");
         if (username != null) {
             try {
-                refreshNotifications(model, username);
+                List<AppointmentNotificationDTO> notifications = notificationClient.getUnreadNotifications(username);
+                if (notifications != null) {
+                    // Contar solo las notificaciones enviadas y no leídas
+                    long unreadCount = notifications.stream()
+                            .filter(n -> n.isSent() && !n.isRead())
+                            .count();
+
+                    model.addAttribute("notifications", notifications);
+                    model.addAttribute("unreadNotificationsCount", unreadCount);
+                } else {
+                    model.addAttribute("notifications", new ArrayList<>());
+                    model.addAttribute("unreadNotificationsCount", 0);
+                }
             } catch (Exception e) {
-                model.addAttribute("notifications", List.of());
+                model.addAttribute("notifications", new ArrayList<>());
                 model.addAttribute("unreadNotificationsCount", 0);
             }
         }
@@ -56,19 +68,14 @@ public class AuthController {
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         String username = (String) session.getAttribute("USERNAME");
+        Set<String> roles = (Set<String>) session.getAttribute("USER_ROLES");
         if (username != null) {
             try {
                 AuthDTO userInfo = authClient.getUserInfo(username);
 
                 // Agregar información básica del usuario
+                model.addAttribute("roles", roles);
                 model.addAttribute("username", username);
-                model.addAttribute("userRoles", session.getAttribute("USER_ROLES"));
-
-                // Obtener y agregar notificaciones usando el client
-                List<AppointmentNotificationDTO> notifications =
-                        notificationClient.getUnreadNotifications(username);
-                model.addAttribute("notifications", notifications);
-                model.addAttribute("unreadNotificationsCount", notificationClient.getUnreadNotificationCount(username));
 
                 // Manejo de la imagen de perfil
                 String profileImageUrl = null;
@@ -243,6 +250,7 @@ public class AuthController {
 
         return response;
     }
+
 
     private void refreshNotifications(Model model, String username) {
         var notifications = notificationClient.getUnreadNotifications(username);

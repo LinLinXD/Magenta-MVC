@@ -15,14 +15,7 @@ public class AppointmentNotificationDTO {
     private Long appointmentId;
     private LocalDateTime notificationTime;
     private boolean read;
+    private boolean sent;
     private String message;
     private NotificationType type;
-
-    // Método de utilidad para formatear mensajes
-    public String getFormattedMessage() {
-        if (appointmentId == null) {
-            return message;
-        }
-        return message + " - ID: " + appointmentId;
-    }
 }

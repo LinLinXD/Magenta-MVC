@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario de Citas</title>
-    <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/home-css/home.css?v=1}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/calendar-css/calendar.css?v=1}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <body>
-<nav th:replace="~{fragments/nav}"></nav>
 <nav th:replace="~{fragments/nav}"></nav>
 
 <div class="calendar-container">
@@ -90,7 +89,8 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script th:src="@{/javascript/home-js/dropdown.js}"></script>
+<script th:src="@{/javascript/home-js/notification-handler.js}"></script>
+
 </body>
 </html>

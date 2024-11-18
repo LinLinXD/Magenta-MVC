@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AppointmentDTO {
     private Long id;
+    private String name;  
+    private String email;
     private String username;
     private LocalDateTime appointmentDateTime;
     private AppointmentStatus status;

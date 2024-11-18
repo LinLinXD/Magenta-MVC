@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class QuestionnaireResponseDTO {
     private Long questionId;
     private String response;
+    private QuestionnaireQuestionDTO question;
 }

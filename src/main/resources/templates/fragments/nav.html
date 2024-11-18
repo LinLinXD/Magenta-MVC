@@ -4,16 +4,9 @@
 </head>
 <body>
 <nav th:fragment="nav" class="header">
-    <div class="header-burger-list">
-        <div class="burger-icon">
-            <span class="burger-inner"></span>
-        </div>
-    </div>
-
     <div class="header-logo">
         <a th:href="@{/home}">
             <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg" class="logo-image">
-                <!-- Definiciones de efectos -->
                 <defs>
                     <filter id="softGlow">
                         <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
@@ -61,86 +54,26 @@
         </a>
     </div>
 
-    <div class="header-sections">
-        <div class="usuario">
-            <div class="profile-section" th:if="${username != null}">
-                <div class="profile-image-container">
-                    <img th:src="${session.PROFILE_IMAGE_URL != null ?
-                            session.PROFILE_IMAGE_URL :
-                            '/images/default-profile-picture.png'}"
-                         alt="Imagen de perfil"
-                         id="profileImage-2"
-                         class="profile-image"
-                         onerror="this.src='/images/default-profile-picture.png'">
-                </div>
-                <span class="profile-username" th:text="${username}"></span>
-                <div class="profile-separator"></div>
-                <div class="profile-options">
-                    <a href="/modifyUser" class="profile-option">
-                        <span class="material-symbols-outlined">settings</span>
-                        <span>Editar Perfil</span>
-                    </a>
-                    <a href="/logout" class="profile-option">
-                        <span class="material-symbols-outlined">logout</span>
-                        <span>Cerrar Sesión</span>
-                    </a>
-                </div>
-            </div>
-            <div class="nav">
-                <div>
-                    <ul class="header-items">
-                        <li>Inicio</li>
-                        <li>Producto</li>
-                        <li>Contacto</li>
-                        <li>Nosotros</li>
-                        <li th:if="${username != null}"><a href="/appointments">Citas</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="header-items-pc">
-        <ul>
-            <li>Inicio</li>
-            <li>Producto</li>
-            <li>Contacto</li>
-            <li>Nosotros</li>
-            <li th:if="${username != null}"><a href="/appointments">Citas</a></li>
-        </ul>
-    </div>
-
     <div class="header-button">
-            <span th:if="${username == null}">
-                <button class="login-button">
-                    <a th:href="@{/login}">Login</a>
-                </button>
-            </span>
-
         <!-- Contenedor del perfil con notificaciones -->
         <div th:if="${username != null}" class="profile-container">
-                <span class="profile-trigger">
-                    <!-- Indicador de notificaciones -->
-                    <div th:if="${unreadNotificationsCount > 0}" class="notification-indicator">
-                        <span class="notification-count" th:text="${unreadNotificationsCount}"></span>
-                    </div>
-
-                    <img th:src="${session.PROFILE_IMAGE_URL != null ?
-                        session.PROFILE_IMAGE_URL :
-                        '/images/default-profile-picture.png'}"
-                         alt="Imagen de perfil"
-                         id="profileImage-1"
-                         class="nav-profile-image"
-                         onerror="this.src='/images/default-profile-picture.png'">
-                </span>
+            <span class="profile-trigger">
+                <div th:if="${unreadNotificationsCount > 0}" class="notification-indicator">
+                </div>
+                <img th:src="${session.PROFILE_IMAGE_URL != null ?
+                    session.PROFILE_IMAGE_URL :
+                    '/images/default-profile-picture.png'}"
+                     alt="Imagen de perfil"
+                     id="profileImage-1"
+                     class="nav-profile-image"
+                     onerror="this.src='/images/default-profile-picture.png'">
+            </span>
 
             <div class="profile-dropdown">
-                <!-- Cabecera del dropdown -->
                 <div class="profile-header">
                     <span th:text="${username}" class="profile-name"></span>
                 </div>
 
-                <!-- Sección de notificaciones -->
                 <div class="notifications-section">
                     <div class="notifications-header">
                         <span>Notificaciones</span>
@@ -150,44 +83,38 @@
                         <!-- Lista de notificaciones -->
                         <div th:if="${notifications != null and !notifications.empty}"
                              th:each="notification : ${notifications}"
-                             th:class="${'notification-item' + (notification.read ? '' : ' unread')}">
+                             th:class="${'notification-item' + (notification.read ? '' : ' unread')}"
+                             th:with="showNotification=${notification.sent}">
 
-                            <form th:if="${!notification.read}"
-                                  th:action="@{/notifications/{id}/read(id=${notification.id})}"
-                                  method="post"
-                                  style="display: none;">
-                                <input type="hidden" name="_method" value="PUT" />
-                            </form>
+                            <div th:if="${showNotification}">
+                                <form th:id="${'readForm-' + notification.id}"
+                                      th:action="@{/notifications/{id}/read(id=${notification.id})}"
+                                      method="post">
+                                    <input type="hidden" name="_method" value="PUT" />
+                                </form>
 
-                            <a th:if="${notification.appointmentId != null}"
-                               th:href="@{/appointments/{id}(id=${notification.appointmentId})}"
-                               class="notification-content">
-                                <div class="notification-title" th:text="${notification.message}"></div>
-                                <div class="notification-time"
-                                     th:text="${#temporals.format(notification.notificationTime, 'dd/MM/yyyy HH:mm')}">
-                                </div>
-                            </a>
-
-                            <div th:if="${notification.appointmentId == null}" class="notification-content">
-                                <div class="notification-title" th:text="${notification.message}"></div>
-                                <div class="notification-time"
-                                     th:text="${#temporals.format(notification.notificationTime, 'dd/MM/yyyy HH:mm')}">
-                                </div>
+                                <!-- Cambiar el enlace para que vaya a my-appointments -->
+                                <a href="/appointments/my-appointments"
+                                   class="notification-content"
+                                   th:onclick="'event.preventDefault(); document.getElementById(\'readForm-' + ${notification.id} + '\').submit();'">
+                                    <div class="notification-title" th:text="${notification.message}"></div>
+                                    <div class="notification-time"
+                                         th:text="${#temporals.format(notification.notificationTime, 'dd/MM/yyyy HH:mm')}">
+                                    </div>
+                                </a>
                             </div>
                         </div>
 
                         <!-- Mensaje cuando no hay notificaciones -->
-                        <div th:if="${notifications == null or notifications.empty}"
+                        <div th:with="sentNotifications=${notifications != null ? notifications.?[sent == true] : null}"
+                             th:if="${sentNotifications == null or sentNotifications.empty}"
                              class="notification-empty">
                             No hay notificaciones
                         </div>
                     </div>
-                </div>
 
-                <!-- Separador -->
                 <div class="dropdown-divider"></div>
 
-                <!-- Opciones del perfil -->
                 <div class="profile-options">
                     <a th:href="@{/modifyUser}" class="profile-option-1">
                         <span class="material-symbols-outlined">settings</span>

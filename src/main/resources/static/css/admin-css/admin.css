@@ -1,0 +1,328 @@
+/* admin.css temático */
+:root {
+    --magenta-50: #fff2fe;
+    --magenta-100: #ffe3fe;
+    --magenta-200: #ffc6fd;
+    --magenta-300: #ff99f6;
+    --magenta-400: #ff5def;
+    --magenta-500: #ff21f2;
+    --magenta-600: #ff00ff;
+    --magenta-700: #cf00ca;
+    --magenta-800: #a900a3;
+    --magenta-900: #890682;
+    --magenta-950: #5e005a;
+    --purple-dark: #3D0A3D;
+    --purple-light: #800080;
+}
+
+body {
+    background: linear-gradient(135deg, var(--purple-dark), var(--purple-light));
+    min-height: 100vh;
+}
+
+.admin-container {
+    max-width: 1400px;
+    margin: 5rem auto;
+    padding: 2rem;
+}
+
+.admin-container h1 {
+    color: white;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.filters-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.filters-section select,
+.filters-section input[type="date"] {
+    padding: 0.75rem;
+    border: 2px solid var(--magenta-200);
+    border-radius: 8px;
+    background: white;
+    color: var(--magenta-900);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filters-section select:focus,
+.filters-section input[type="date"]:focus {
+    border-color: var(--magenta-600);
+    box-shadow: 0 0 0 2px var(--magenta-100);
+    outline: none;
+}
+
+.filter-btn {
+    background: var(--magenta-600);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-btn:hover {
+    background: var(--magenta-700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.2);
+}
+
+.appointments-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.appointments-section h2 {
+    color: var(--magenta-900);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.appointments-table {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--magenta-100);
+}
+
+th {
+    background-color: var(--magenta-900);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+th:first-child {
+    border-top-left-radius: 8px;
+}
+
+th:last-child {
+    border-top-right-radius: 8px;
+}
+
+tr:hover {
+    background-color: var(--magenta-50);
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.pending {
+    background-color: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+}
+
+.status-badge.confirmed {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.status-badge.cancelled {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.status-badge.completed {
+    background-color: #f0f9ff;
+    color: #075985;
+    border: 1px solid #7dd3fc;
+}
+
+.status-select {
+    padding: 0.5rem;
+    border: 2px solid var(--magenta-200);
+    border-radius: 8px;
+    background: white;
+    color: var(--magenta-900);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.status-select:focus {
+    border-color: var(--magenta-600);
+    box-shadow: 0 0 0 2px var(--magenta-100);
+    outline: none;
+}
+
+.view-responses-btn {
+    background: var(--magenta-600);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.view-responses-btn:hover {
+    background: var(--magenta-700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.2);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(61, 10, 61, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 16px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--magenta-900);
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: var(--magenta-50);
+}
+
+.close:hover {
+    background: var(--magenta-100);
+    transform: rotate(90deg);
+}
+
+.responses-container {
+    margin-top: 2rem;
+}
+
+.response-item {
+    border: 2px solid var(--magenta-100);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.response-item:hover {
+    border-color: var(--magenta-300);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 255, 0.1);
+}
+
+.response-item .question {
+    font-weight: 600;
+    color: var(--magenta-900);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.response-item .answer {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+@media screen and (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+        margin: 3rem auto;
+    }
+
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+
+    .admin-container h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .appointments-section {
+        padding: 1rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 2.5% auto;
+        padding: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .appointments-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 800px;
+    }
+}

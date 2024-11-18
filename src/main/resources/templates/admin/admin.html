@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo</title>
+    <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css?v=1}">
+    <link rel="stylesheet" th:href="@{/css/home-css/home.css?v=18}">
+    <link rel="stylesheet" th:href="@{/css/admin-css/admin.css?v=1}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<div class="admin-container">
+    <h1>Panel de Administración</h1>
+
+    <!-- Filtros mediante form -->
+    <form th:action="@{/admin}" method="get" class="filters-section">
+        <select name="status" id="statusFilter">
+            <option value="">Todos los estados</option>
+            <option value="PENDING" th:selected="${param.status == 'PENDING'}">Pendientes</option>
+            <option value="CONFIRMED" th:selected="${param.status == 'CONFIRMED'}">Confirmados</option>
+            <option value="CANCELLED" th:selected="${param.status == 'CANCELLED'}">Cancelados</option>
+            <option value="COMPLETED" th:selected="${param.status == 'COMPLETED'}">Completados</option>
+        </select>
+        <select name="eventType" id="eventTypeFilter">
+            <option value="">Todos los eventos</option>
+            <option value="WEDDING" th:selected="${param.eventType == 'WEDDING'}">Bodas</option>
+            <option value="SWEET_FIFTEEN" th:selected="${param.eventType == 'SWEET_FIFTEEN'}">Quinceañeras</option>
+            <option value="COMMUNION" th:selected="${param.eventType == 'COMMUNION'}">Comuniones</option>
+            <option value="BAPTISM" th:selected="${param.eventType == 'BAPTISM'}">Bautizos</option>
+            <option value="CORPORATE" th:selected="${param.eventType == 'CORPORATE'}">Eventos Corporativos</option>
+            <option value="OTHER" th:selected="${param.eventType == 'OTHER'}">Otros</option>
+        </select>
+        <input type="date" name="date" th:value="${param.date}">
+        <button type="submit" class="filter-btn">Filtrar</button>
+    </form>
+
+    <div class="appointments-section">
+        <h2>Gestión de Citas</h2>
+
+        <div class="appointments-table">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Fecha</th>
+                    <th>Tipo de Evento</th>
+                    <th>Estado</th>
+                    <th>Respuestas</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="appointment : ${appointments}">
+                    <td th:text="${appointment.id}"></td>
+                    <td th:text="${appointment.username}"></td>
+                    <td th:text="${appointment.name}"></td>
+                    <td th:text="${appointment.email}"></td>
+                    <td th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${appointment.eventType.displayName}"></td>
+                    <td>
+                                <span th:class="'status-badge ' + ${appointment.status.toString().toLowerCase()}"
+                                      th:text="${appointment.status}">
+                                </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/appointments/{id}/responses(id=${appointment.id})}"
+                           class="view-responses-btn"
+                           th:if="${!appointment.responses.empty}">
+                            Ver Respuestas
+                        </a>
+                        <span th:if="${appointment.responses.empty}">Sin respuestas</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/appointments/{id}/status(id=${appointment.id})}"
+                              method="post"
+                              th:if="${appointment.status != T(com.proyecto.dto.AppointmentStatus).CANCELLED}">
+                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                <option value="" disabled selected>Cambiar estado</option>
+                                <option value="PENDING">Pendiente</option>
+                                <option value="CONFIRMED">Confirmado</option>
+                                <option value="COMPLETED">Completado</option>
+                                <option value="CANCELLED">Cancelar</option>
+                            </select>
+                            <input type="hidden" name="_method" value="PUT"/>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para las respuestas -->
+<div id="responsesModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Respuestas del Cuestionario</h2>
+        <div id="responsesContainer" class="responses-container">
+            <div th:if="${selectedAppointment != null}">
+                <div th:each="response : ${selectedAppointment.responses}" class="response-item">
+                    <div class="question" th:text="${response.question?.questionText}"></div>
+                    <div class="answer" th:text="${response.response}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Cuando la página carga
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('responsesModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        // Si hay una cita seleccionada (después de redirección), mostrar el modal
+        if (document.querySelector('#responsesContainer .response-item')) {
+            modal.style.display = 'block';
+        }
+
+        // Cerrar modal
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+            window.location.href = '/admin';
+        }
+
+        // Cerrar al hacer clic fuera del modal
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                window.location.href = '/admin';
+            }
+        }
+    });
+</script>
+</body>
+</html>

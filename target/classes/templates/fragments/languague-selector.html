@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .language-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .language-selected {
+            display: flex;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            padding: 4px 8px; /* Reducido de 8px 12px */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Reducido de 1.5px a 1px */
+            border-radius: 3px; /* Reducido de 4px */
+            transition: all 0.3s ease;
+            font-size: 12px; /* Añadido para reducir tamaño de texto */
+        }
+
+        .language-selected:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .language-selected .material-symbols-outlined {
+            font-size: 16px; /* Reducido de 20px */
+            transition: transform 0.3s ease;
+            margin-left: 2px; /* Añadido para mejor espaciado */
+        }
+
+        .language-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px; /* Reducido de 8px */
+            background: white;
+            border-radius: 4px; /* Reducido de 8px */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Reducida la sombra */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            min-width: 100px; /* Reducido de 150px */
+            overflow: hidden;
+        }
+
+        .language-dropdown:hover .language-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-dropdown:hover .language-selected .material-symbols-outlined {
+            transform: rotate(180deg);
+        }
+
+        .language-options a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px; /* Reducido de 12px 16px */
+            color: #5e005a;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 12px; /* Reducido tamaño de texto */
+        }
+
+        .language-options a:hover {
+            background-color: rgba(137, 6, 130, 0.05);
+        }
+
+        .language-options a.active {
+            background-color: rgba(137, 6, 130, 0.1);
+            font-weight: 500;
+        }
+
+        .language-option-text {
+            font-size: 12px; /* Reducido de 14px */
+        }
+
+        .language-option-code {
+            font-size: 11px; /* Reducido de 12px */
+            font-weight: 600;
+            opacity: 0.7;
+            margin-left: 8px; /* Añadido para mejor espaciado */
+        }
+
+        /* Ajuste para el tema oscuro de la navegación */
+        @media (prefers-color-scheme: dark) {
+            .language-options {
+                background: #1a1a1a;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .language-options a {
+                color: white;
+            }
+
+            .language-options a:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .language-options a.active {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .language-dropdown {
+                top: 15px; /* Ajustado para móviles */
+                right: 15px;
+            }
+
+            .language-options {
+                min-width: 90px; /* Aún más compacto en móviles */
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="selector" class="language-dropdown">
+    <div class="language-selected">
+        <span th:text="${#locale.language.toUpperCase()}">ES</span>
+        <span class="material-symbols-outlined">expand_more</span>
+    </div>
+    <div class="language-options">
+        <a href="?lang=es" th:class="${#locale.language == 'es'} ? 'active' : ''">
+            ES <span class="language-option-code">Español</span>
+        </a>
+        <a href="?lang=en" th:class="${#locale.language == 'en'} ? 'active' : ''">
+            EN <span class="language-option-code">English</span>
+        </a>
+        <a href="?lang=br" th:class="${#locale.language == 'br'} ? 'active' : ''">
+            BR <span class="language-option-code">Português</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>

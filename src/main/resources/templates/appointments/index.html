@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Citas</title>
+    <title th:text="#{index.title}">Appointments manager</title>
     <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/appointments-css/appointments.css?v=1.4}">
@@ -18,8 +18,8 @@
 
 <div class="appointments-landing">
     <div class="appointments-header">
-        <h1>Gestión de Citas</h1>
-        <p class="subtitle">¿Qué te gustaría hacer?</p>
+        <h1 th:text="#{index.title}">Appointment Management</h1>
+        <p class="subtitle" th:text="#{index.subtitle}">What would you like to do?</p>
     </div>
 
     <div th:if="${error}" class="alert error" th:text="${error}"></div>
@@ -29,16 +29,16 @@
         <div class="action-card">
             <a th:href="@{/appointments/new}" class="card-content">
                 <span class="material-icons">add_circle</span>
-                <h2>Agendar Nueva Cita</h2>
-                <p>Programa una nueva cita para tu evento</p>
+                <h2 th:text="#{index.appointment}">Schedule New Appointment</h2>
+                <p th:text="#{index.appointmentDescription}">Schedule new appointment for your event</p>
             </a>
         </div>
 
         <div class="action-card">
             <a th:href="@{/appointments/my-appointments}" class="card-content">
                 <span class="material-icons">event</span>
-                <h2>Mis Citas</h2>
-                <p>Ver y gestionar tus citas existentes</p>
+                <h2 th:text="#{index.myAppointments}">My Appointments</h2>
+                <p th:text="#{index.myAppointmentsDescription}">View and manage your existing appointments</p>
             </a>
         </div>
     </div>

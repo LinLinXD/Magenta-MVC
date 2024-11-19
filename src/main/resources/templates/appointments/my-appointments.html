@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Citas</title>
+    <title th:text="#{appointments.title}">Mis Citas</title>
     <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/my-appointments-css/my-appointments.css?v=1.4}">
@@ -18,8 +18,8 @@
 
 <div class="appointments-container">
     <div class="appointments-header">
-        <h1>Mis Citas</h1>
-        <a th:href="@{/appointments/new}" class="btn-primary">Agendar Nueva Cita</a>
+        <h1 th:text="#{appointments.myAppointments}">My Appointments</h1>
+        <a th:href="@{/appointments/new}" th:text="#{appointments.new}" class="btn-primary">New Appointment</a>
     </div>
 
     <div th:if="${error}" class="alert error" th:text="${error}"></div>
@@ -29,29 +29,40 @@
         <div th:each="appointment : ${appointments}" class="appointment-card">
             <div class="appointment-header" th:classappend="${appointment.status.name().toLowerCase()}">
                 <div class="event-info">
-                    <h3 th:text="${appointment.eventType.displayName}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Boda'}"
+                        th:text="#{event.wedding}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Quinceañera'}"
+                        th:text="#{event.sweetFifteen}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Comunión'}"
+                        th:text="#{event.communion}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Bautizo'}"
+                        th:text="#{event.baptism}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Evento Corporativo'}"
+                        th:text="#{event.corporate}"></h3>
+                    <h3 th:if="${appointment.eventType.displayName == 'Otro'}"
+                        th:text="#{event.other}"></h3>
                     <span class="status-badge" th:text="${appointment.status}"></span>
                 </div>
                 <div class="appointment-actions" th:if="${appointment.status.name() == 'PENDING'}">
                     <form th:action="@{/appointments/{id}/cancel(id=${appointment.id})}"
                           method="post"
                           onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta cita?');">
-                        <button type="submit" class="btn-cancel">Cancelar</button>
+                        <button type="submit" class="btn-cancel" th:text="#{appointments.cancel}">Cancel</button>
                     </form>
                 </div>
             </div>
 
             <div class="appointment-details">
                 <div class="detail-row">
-                    <span class="label">Fecha:</span>
+                    <span class="label" th:text="#{appointments.date}">Fecha:</span>
                     <span class="value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Hora:</span>
+                    <span class="label" th:text="#{appointments.time}">Hora:</span>
                     <span class="value" th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm')}"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Agendada:</span>
+                    <span class="label" th:text="#{appointments.scheduled}">Scheduled:</span>
                     <span class="value" th:text="${#temporals.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
                 </div>
             </div>
@@ -61,9 +72,9 @@
     <div th:if="${appointments.empty}" class="no-appointments">
         <div class="empty-state">
             <span class="material-icons">event_busy</span>
-            <h2>No tienes citas agendadas</h2>
-            <p>¡Agenda tu primera cita ahora!</p>
-            <a th:href="@{/appointments/new}" class="btn-primary">Agendar Cita</a>
+            <h2 th:text="#{appointments.noAppointments}">You have no appointments scheduled</h2>
+            <p th:text="#{appointments.first}">¡Agenda tu primera cita ahora!</p>
+            <a th:href="@{/appointments/new}" th:text="#{appointments.schedule}" class="btn-primary">Schedule appointment</a>
         </div>
     </div>
 </div>

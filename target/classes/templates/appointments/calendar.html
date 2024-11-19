@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario de Citas</title>
+    <title th:text="#{calendar.title}">Calendario de Citas</title>
     <link rel="stylesheet" th:href="@{/css/home-css/home.css?v=1}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/calendar-css/calendar.css?v=1}">
@@ -19,10 +19,13 @@
 
 <div class="calendar-container">
     <div class="calendar-header">
-        <h1>Selecciona una Fecha</h1>
+        <h1 th:text="#{calendar.title}">Select a date</h1>
         <p class="subtitle">
-            Estás agendando un evento de tipo:
-            <span class="event-type-badge" th:text="${eventType.displayName}"></span>
+            <span th:text="#{calendar.scheduling}">You are scheduling and event of type:</span>
+            <span class="event-type-badge" th:if="${eventType.displayName == 'Boda'}" th:text="#{event.wedding}"></span>
+            <span class="event-type-badge" th:if="${eventType.displayName == 'Quince años'}" th:text="#{event.sweetFifteen}"></span>
+
+
         </p>
     </div>
 
@@ -30,13 +33,13 @@
 
     <div class="calendar-grid">
         <div class="weekdays-header">
-            <div>Dom</div>
-            <div>Lun</div>
-            <div>Mar</div>
-            <div>Mié</div>
-            <div>Jue</div>
-            <div>Vie</div>
-            <div>Sáb</div>
+            <div th:text="#{calendar.days.mon}">Lun</div>
+            <div th:text="#{calendar.days.tue}">Mar</div>
+            <div th:text="#{calendar.days.wed}">Mié</div>
+            <div th:text="#{calendar.days.thu}">Jue</div>
+            <div th:text="#{calendar.days.fri}">Vie</div>
+            <div th:text="#{calendar.days.sat}">Sáb</div>
+            <div th:text="#{calendar.days.sun}">Dom</div>
         </div>
 
         <div class="days-grid">
@@ -53,14 +56,13 @@
 
                     <a th:if="${slot.available && !date.isBefore(today)}"
                        th:href="@{/appointments/new(eventType=${eventType},date=${#temporals.format(date,'yyyy-MM-dd')})}"
-                       class="select-day">
-                        Seleccionar
-                    </a>
+                       class="select-day"
+                       th:text="#{calendar.select}">Seleccionar</a>
 
                     <span th:if="${!slot.available || date.isBefore(today)}"
                           class="unavailable-reason"
-                          th:text="${date.isBefore(today) ? 'Fecha pasada' : slot.unavailableReason}">
-                </span>
+                          th:text="${date.isBefore(today) ? #messages.msg('calendar.pastDate') : #messages.msg('calendar.weekend')}">
+                    </span>
                 </th:block>
             </div>
         </div>
@@ -70,21 +72,21 @@
         <div class="calendar-legend">
             <div class="legend-item">
                 <span class="legend-dot available"></span>
-                <span>Disponible</span>
+                <span th:text="#{calendar.available}">Disponible</span>
             </div>
             <div class="legend-item">
                 <span class="legend-dot unavailable"></span>
-                <span>No disponible</span>
+                <span th:text="#{calendar.unavailable}">No disponible</span>
             </div>
             <div class="legend-item">
                 <span class="legend-dot today"></span>
-                <span>Hoy</span>
+                <span th:text="#{calendar.today}">Hoy</span>
             </div>
         </div>
 
         <a th:href="@{/appointments}" class="btn-secondary">
             <span class="material-icons">arrow_back</span>
-            Volver
+            <span th:text="#{calendar.back}">Volver</span>
         </a>
     </div>
 </div>

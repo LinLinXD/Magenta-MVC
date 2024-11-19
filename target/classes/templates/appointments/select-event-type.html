@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Tipo de Evento</title>
+    <title th:text="#{eventType.title}">Select an event type</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,8 +19,8 @@
 
 <div class="select-event-container">
     <div class="select-event-header">
-        <h1>Seleccionar Tipo de Evento</h1>
-        <p class="subtitle">¿Qué tipo de evento deseas organizar?</p>
+        <h1 th:text="#{eventType.title}">Select an event type</h1>
+        <p class="subtitle" th:text="#{eventType.subtitle}">What type of event do you want to schedule?</p>
     </div>
 
     <div th:if="${error}" class="alert error" th:text="${error}"></div>
@@ -39,18 +39,35 @@
                               }">
                         </span>
                 </div>
-                <h2 th:text="${type.displayName}"></h2>
-                <p class="event-description" th:text="${T(com.proyecto.util.EventDescriptionUtil).getEventDescription(type)}">
-                    Descripción del evento
+                <h2 th:if="${type.displayName == 'Boda'}"
+                    th:text="#{event.wedding}"></h2>
+                <h2 th:if="${type.displayName == 'Quinceañera'}"
+                    th:text="#{event.sweetFifteen}"></h2>
+                <h2 th:if="${type.displayName== 'Comunión'}"
+                    th:text="#{event.communion}"></h2>
+                <h2 th:if="${type.displayName == 'Bautizo'}"
+                    th:text="#{event.baptism}"></h2>
+                <h2 th:if="${type.displayName== 'Evento Corporativo'}"
+                    th:text="#{event.corporate}"></h2>
+                <h2 th:if="${type.displayName == 'Otro'}"
+                    th:text="#{event.other}"></h2>
+
+                <p class="event-description" th:text="${T(com.proyecto.util.EventDescriptionUtil).getEventDescriptionEs(type)}" th:if="${#locale.language == 'es'}">
+                </p>
+
+                <p class="event-description" th:text="${T(com.proyecto.util.EventDescriptionUtil).getEventDescriptionEn(type)}" th:if="${#locale.language == 'en'}">
+                </p>
+
+                <p class="event-description" th:text="${T(com.proyecto.util.EventDescriptionUtil).getEventDescriptionBr(type)}" th:if="${#locale.language == 'br'}">
                 </p>
             </a>
         </div>
     </div>
 
     <div class="back-button">
-        <a th:href="@{/appointments}" class="btn-secondary">
+        <a th:href="@{/appointments}" class="btn-secondary" th:text="#{general.back}">
             <span class="material-icons">arrow_back</span>
-            Volver
+            Go back
         </a>
     </div>
 </div>

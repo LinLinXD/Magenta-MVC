@@ -228,3 +228,100 @@ input:-webkit-autofill{
         margin-top: 20px;
     }
 }
+
+/* Estilos para el selector de idioma */
+.language-dropdown {
+    position: fixed;
+    display: inline-block;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.language-selected {
+    display: flex;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    background: rgba(137, 6, 130, 0.5);
+}
+
+.language-selected:hover {
+    background: rgba(137, 6, 130, 0.7);
+}
+
+.language-selected .material-symbols-outlined {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+    margin-left: 2px;
+}
+
+.language-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    min-width: 100px;
+    overflow: hidden;
+}
+
+.language-dropdown:hover .language-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.language-dropdown:hover .language-selected .material-symbols-outlined {
+    transform: rotate(180deg);
+}
+
+.language-options a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    color: #5e005a;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: 12px;
+}
+
+.language-options a:hover {
+    background-color: rgba(137, 6, 130, 0.05);
+}
+
+.language-options a.active {
+    background-color: rgba(137, 6, 130, 0.1);
+    font-weight: 500;
+}
+
+.language-option-code {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-left: 8px;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .language-dropdown {
+        top: 15px;
+        right: 15px;
+    }
+
+    .language-options {
+        min-width: 90px;
+    }
+}

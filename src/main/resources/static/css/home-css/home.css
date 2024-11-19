@@ -293,6 +293,22 @@ body {
 
 @media screen and (min-width: 376px) and (max-width: 767px) {
     .header-items { display: none; }
+    .header-logo{
+        width: 60%;
+    }
+    .header-button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        width: 30%;
+    }
+
+    .language-dropdown{
+        width: 10%;
+        justify-content: center;
+        align-items: center;
+    }
 
     .header-burger-list {
         display: flex;
@@ -340,12 +356,12 @@ body {
 
     .header-logo {
         padding: 0;
-        width: 40%;
+        width: 35%;
         justify-content: flex-start;
     }
 
     .header-items-pc {
-        width: 50%;
+        width: 45.5%;
         height: inherit;
         display: flex;
     }
@@ -358,8 +374,10 @@ body {
     }
 
     .header-button {
-        width: 10%;
+        width: 19.5%;
+        gap: 1rem;
         display: flex;
+
         justify-content: center;
         align-items: center;
         height: inherit;

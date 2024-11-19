@@ -76,7 +76,7 @@
 
                 <div class="notifications-section">
                     <div class="notifications-header">
-                        <span>Notificaciones</span>
+                        <span th:text="#{nav.notifications}">Notifications</span>
                     </div>
 
                     <div class="notifications-list">
@@ -103,13 +103,6 @@
                                     </div>
                                 </a>
                             </div>
-                        </div>
-
-                        <!-- Mensaje cuando no hay notificaciones -->
-                        <div th:with="sentNotifications=${notifications != null ? notifications.?[sent == true] : null}"
-                             th:if="${sentNotifications == null or sentNotifications.empty}"
-                             class="notification-empty">
-                            No hay notificaciones
                         </div>
                     </div>
 

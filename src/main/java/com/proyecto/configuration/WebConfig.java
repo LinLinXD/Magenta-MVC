@@ -1,6 +1,9 @@
 package com.proyecto.configuration;
 
 import com.proyecto.interceptor.AuthInterceptor;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -54,5 +57,15 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadPath)
                 .setCachePeriod(3600);
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainerCustomizer() {
+        return container -> {
+            container.addConnectorCustomizers(connector -> {
+                connector.setProperty("relaxedPathChars", "[]{}|");
+                connector.setProperty("relaxedQueryChars", "[]{}|");
+            });
+        };
     }
 }

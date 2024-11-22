@@ -1,0 +1,148 @@
+.about-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #800080, #5c005c);
+    color: white;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.about-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.decorator-line {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ff66ff, transparent);
+    margin: 0 auto;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-image {
+    position: relative;
+}
+
+
+.image-frame {
+    position: relative;
+    z-index: 2;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.image-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.image-frame:hover img {
+    transform: scale(1.05);
+}
+
+.image-decoration {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #ff66ff;
+    border-radius: 16px;
+    z-index: 1;
+}
+
+.about-text h3 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #ff66ff;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.about-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.feature {
+    text-align: center;
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: #ff66ff;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.feature h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #ff66ff;
+}
+
+.feature p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.image-frame {
+    position: relative;
+    z-index: 2;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    height: 400px; /* Set fixed height */
+}
+
+.about-image-content {
+    width: 100%;
+    max-height: 400px;
+    height: 100%;
+    object-fit: cover; /* This ensures the image covers the container without distortion */
+}
+
+@media screen and (max-width: 768px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .about-features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .about-header h2 {
+        font-size: 2rem;
+    }
+
+    .about-text h3 {
+        font-size: 1.75rem;
+    }
+}

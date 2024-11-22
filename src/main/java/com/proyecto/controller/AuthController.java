@@ -222,12 +222,20 @@ public class AuthController {
 
     @GetMapping("/modifyUser")
     public String showModifyUserForm(Model model, HttpSession session) {
-        // Verificar si hay una imagen en la sesión
-        String profileImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
-        ModifyUserDTO modifyUserDTO = new ModifyUserDTO();
-        model.addAttribute("modifyUserDTO", modifyUserDTO);
-        model.addAttribute("currentProfileImage", profileImageUrl);
-        return "modifyUser";
+
+        String username = (String) session.getAttribute("USERNAME");
+
+        if(username == null) {
+            return "redirect:/login";
+        } else {
+            String profileImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
+            ModifyUserDTO modifyUserDTO = new ModifyUserDTO();
+            model.addAttribute("modifyUserDTO", modifyUserDTO);
+            model.addAttribute("currentProfileImage", profileImageUrl);
+            return "modifyUser";
+        }
+
+
     }
 
     @GetMapping("/refreshNotifications")

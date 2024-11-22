@@ -109,13 +109,13 @@
                 <div class="dropdown-divider"></div>
 
                 <div class="profile-options">
-                    <a th:href="@{/modifyUser}" class="profile-option-1">
+                    <a th:href="@{/modifyUser}" class="profile-option-1" >
                         <span class="material-symbols-outlined">settings</span>
-                        Editar Perfil
+                        <span th:text="#{nav.editProfile}">Edit profile</span>
                     </a>
-                    <a th:href="@{/logout}" class="profile-option-1">
+                    <a th:href="@{/logout}" class="profile-option-1" >
                         <span class="material-symbols-outlined">logout</span>
-                        Cerrar Sesión
+                        <span th:text="#{nav.logout}">Logout</span>
                     </a>
                 </div>
             </div>

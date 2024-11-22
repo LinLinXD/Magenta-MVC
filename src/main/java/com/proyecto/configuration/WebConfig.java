@@ -28,8 +28,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/css/**",
                         "/js/**",
                         "/images/**",
-                        "/login.css",
-                        "/home.css",
                         "/uploads/**"
                 );
     }

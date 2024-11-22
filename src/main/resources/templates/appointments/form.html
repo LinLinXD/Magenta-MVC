@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Cita</title>
+    <title th:text="#{form.title}">Appointment Form</title>
     <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/form-css/form.css?v=1}">
@@ -19,8 +19,14 @@
 
 <div class="form-container">
     <div class="form-header">
-        <h1>Agendar [[${eventType.displayName}]]</h1>
-        <p class="subtitle">Por favor complete todos los campos requeridos</p>
+        <h1 th:if="${eventType.displayName} == 'Quinceañera'" th:text="#{form.appointmentSelection} + ' ' +  #{event.sweetFifteen}"></h1>
+        <h1 th:if="${eventType.displayName} == 'Boda'" th:text="#{form.appointmentSelection} + ' ' +  #{event.wedding}"></h1>
+        <h1 th:if="${eventType.displayName} == 'Comunión'" th:text="#{form.appointmentSelection} + ' ' +  #{event.communion}"></h1>
+        <h1 th:if="${eventType.displayName} == 'Bautizo'" th:text="#{form.appointmentSelection} + ' ' +  #{event.baptism}"></h1>
+        <h1 th:if="${eventType.displayName} == 'Evento Corporativo'" th:text="#{form.appointmentSelection} + ' ' +  #{event.corporate}"></h1>
+        <h1 th:if="${eventType.displayName} == 'Otro'" th:text="#{form.appointmentSelection} + ' ' +  #{event.other}"></h1>
+
+        <p class="subtitle" th:text="#{form.subtitle}">Please complete all the required parameters</p>
     </div>
 
     <div th:if="${error}" class="alert error" th:text="${error}"></div>
@@ -30,7 +36,7 @@
 
         <!-- Selección de Horario -->
         <div class="form-section">
-            <h2>Horario Disponible</h2>
+            <h2 th:text="#{form.scheduleAvailable}">Schedule Available</h2>
             <div class="time-slots">
                 <div th:each="slot : ${timeSlots}" class="time-slot">
                     <input type="radio"

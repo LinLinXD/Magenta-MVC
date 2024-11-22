@@ -4,7 +4,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -27,7 +26,10 @@ public class WebMvcI18nConfig implements WebMvcConfigurer {
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:i18n/messages");
+        messageSource.setBasenames("classpath:i18n/messages",
+                "classpath:i18n/questions");
+        messageSource.setCacheSeconds(3600);
+        messageSource.setAlwaysUseMessageFormat(true);
         messageSource.setDefaultEncoding(StandardCharsets.ISO_8859_1.name());
         return messageSource;
     }
@@ -42,6 +44,7 @@ public class WebMvcI18nConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(localeChangeInterceptor())
+                .addPathPatterns("/**");
     }
 }

@@ -6,9 +6,10 @@ import com.proyecto.dto.*;
 import com.proyecto.util.EventDescriptionUtil;
 import feign.FeignException;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,9 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/appointments")
@@ -191,6 +190,7 @@ public class AppointmentViewController {
             return "redirect:/appointments";
         }
     }
+
 
     @PostMapping("/new")
     public String createAppointment(

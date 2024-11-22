@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil</title>
+    <title th:text="#{modifyUser.title}">Edit Profile</title>
 
     <link rel="stylesheet" th:href="@{/css/modify-css/modify-user.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     </div>
 
     <div class="profile-header">
-        <h1>Editar Perfil</h1>
+        <h1 th:text="#{modifyUser.title}">Edit Profile</h1>
         <div class="profile-image-section">
             <div class="profile-image-container">
                 <!-- Imagen de perfil con fallback -->
@@ -48,34 +48,34 @@
         <div th:if="${error}" class="alert error" th:text="${error}"></div>
 
         <div class="form-group">
-            <label for="name">Nombre</label>
+            <label for="name" th:text="#{modifyUser.name}">Nombre</label>
             <div class="input-container">
                 <input type="text"
                        id="name"
                        th:field="*{name}"
-                       placeholder="Tu nombre" required>
+                       th:placeholder="#{modifyUser.nameDescription}" required>
                 <span class="material-symbols-outlined">edit</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email" th:text="#{modifyUser.email}">Email</label>
             <div class="input-container">
                 <input type="email"
                        id="email"
                        th:field="*{email}"
-                       placeholder="tu@email.com" required>
+                       th:placeholder="#{modifyUser.emailDescription}" required>
                 <span class="material-symbols-outlined">edit</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="phone">Teléfono</label>
+            <label for="phone" th:text="#{modifyUser.phone}">Phone</label>
             <div class="input-container">
                 <input type="tel"
                        id="phone"
                        th:field="*{phone}"
-                       placeholder="Tu teléfono">
+                       th:placeholder="#{modifyUser.phoneDescription}">
                 <span class="material-symbols-outlined">edit</span>
             </div>
         </div>
@@ -88,8 +88,8 @@
                style="display: none;">
 
         <div class="form-actions">
-            <button type="button" class="cancel-button" onclick="window.location.href='/home'">Cancelar</button>
-            <button type="submit" class="save-button">Guardar Cambios</button>
+            <button type="button" class="cancel-button" onclick="window.location.href='/home'" th:text="#{modifyUser.cancel}">Cancel</button>
+            <button type="submit" class="save-button" th:text="#{modifyUser.submit}">Submit Changes</button>
         </div>
     </form>
 </div>
@@ -149,7 +149,6 @@
         // Verificar la imagen actual
         const currentSrc = profileImage.getAttribute('src');
         if (!isValidBase64Image(currentSrc) && currentSrc !== '/images/default-profile-picture.png') {
-            console.log('Usando imagen por defecto debido a fuente inválida');
             profileImage.src = '/images/default-profile-picture.png';
         }
     });

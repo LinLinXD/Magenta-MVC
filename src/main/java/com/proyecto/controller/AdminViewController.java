@@ -2,7 +2,9 @@ package com.proyecto.controller;
 
 import com.proyecto.aspects.RequireRole;
 import com.proyecto.client.AppointmentClient;
+import com.proyecto.client.NotificationClient;
 import com.proyecto.dto.AppointmentDTO;
+import com.proyecto.dto.AppointmentNotificationDTO;
 import com.proyecto.dto.AppointmentStatus;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,8 +27,20 @@ import java.util.stream.Collectors;
 public class AdminViewController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminViewController.class);
+    private final NotificationClient notificationClient;
     private final AppointmentClient appointmentClient;
 
+    /**
+     * Maneja las solicitudes GET para la vista de administración.
+     *
+     * @param session la sesión HTTP actual.
+     * @param model el modelo para la vista.
+     * @param status el estado de las citas a filtrar (opcional).
+     * @param eventType el tipo de evento de las citas a filtrar (opcional).
+     * @param date la fecha de las citas a filtrar (opcional).
+     * @param redirectAttributes atributos para redirección.
+     * @return la vista de administración.
+     */
     @RequireRole("ROLE_ADMIN")
     @GetMapping("/admin")
     public String admin(
@@ -79,6 +94,14 @@ public class AdminViewController {
         }
     }
 
+    /**
+     * Maneja las solicitudes POST para actualizar el estado de una cita.
+     *
+     * @param id el ID de la cita.
+     * @param status el nuevo estado de la cita.
+     * @param redirectAttributes atributos para redirección.
+     * @return la redirección a la vista de administración.
+     */
     @RequireRole("ROLE_ADMIN")
     @PostMapping("/admin/appointments/{id}/status")
     public String updateAppointmentStatus(
@@ -98,6 +121,15 @@ public class AdminViewController {
         return "redirect:/admin";
     }
 
+    /**
+     * Maneja las solicitudes GET para ver las respuestas de una cita.
+     *
+     * @param id el ID de la cita.
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @param redirectAttributes atributos para redirección.
+     * @return la vista de administración con las respuestas de la cita seleccionada.
+     */
     @RequireRole("ROLE_ADMIN")
     @GetMapping("/admin/appointments/{id}/responses")
     public String viewAppointmentResponses(
@@ -134,6 +166,31 @@ public class AdminViewController {
             redirectAttributes.addFlashAttribute("error",
                     "Error al cargar las respuestas: " + e.getMessage());
             return "redirect:/admin";
+        }
+    }
+
+    @ModelAttribute
+    public void addNotificationAttributes(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("USERNAME");
+        if (username != null) {
+            try {
+                List<AppointmentNotificationDTO> notifications = notificationClient.getUnreadNotifications(username);
+                if (notifications != null) {
+                    // Contar solo las notificaciones enviadas y no leídas
+                    long unreadCount = notifications.stream()
+                            .filter(n -> n.isSent() && !n.isRead())
+                            .count();
+
+                    model.addAttribute("notifications", notifications);
+                    model.addAttribute("unreadNotificationsCount", unreadCount);
+                } else {
+                    model.addAttribute("notifications", new ArrayList<>());
+                    model.addAttribute("unreadNotificationsCount", 0);
+                }
+            } catch (Exception e) {
+                model.addAttribute("notifications", new ArrayList<>());
+                model.addAttribute("unreadNotificationsCount", 0);
+            }
         }
     }
 }

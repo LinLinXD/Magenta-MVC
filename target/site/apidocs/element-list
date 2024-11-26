@@ -1,0 +1,9 @@
+com.proyecto
+com.proyecto.aspects
+com.proyecto.client
+com.proyecto.configuration
+com.proyecto.controller
+com.proyecto.dto
+com.proyecto.filter
+com.proyecto.interceptor
+com.proyecto.util

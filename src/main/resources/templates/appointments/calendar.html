@@ -50,7 +50,6 @@
                       (date != null && date.isBefore(today) ? ' past' : '') +
                       (slot.available ? ' available' : ' unavailable')}">
 
-                <!-- Solo mostrar contenido si hay una fecha (no es padding) -->
                 <th:block th:if="${date != null}">
                     <span class="day-number" th:text="${date.getDayOfMonth()}"></span>
 
@@ -72,21 +71,21 @@
         <div class="calendar-legend">
             <div class="legend-item">
                 <span class="legend-dot available"></span>
-                <span th:text="#{calendar.available}">Disponible</span>
+                <span th:text="#{calendar.available}">Available</span>
             </div>
             <div class="legend-item">
                 <span class="legend-dot unavailable"></span>
-                <span th:text="#{calendar.unavailable}">No disponible</span>
+                <span th:text="#{calendar.unavailable}">Unavailable</span>
             </div>
             <div class="legend-item">
                 <span class="legend-dot today"></span>
-                <span th:text="#{calendar.today}">Hoy</span>
+                <span th:text="#{calendar.today}">Today</span>
             </div>
         </div>
 
         <a th:href="@{/appointments}" class="btn-secondary">
             <span class="material-icons">arrow_back</span>
-            <span th:text="#{calendar.back}">Volver</span>
+            <span th:text="#{calendar.back}">Return</span>
         </a>
     </div>
 </div>

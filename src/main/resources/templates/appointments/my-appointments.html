@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{appointments.title}">Mis Citas</title>
+    <title th:text="#{appointments.title}">My Schedules</title>
     <link rel="stylesheet" th:href="@{/css/home-css/home.css}">
     <link rel="stylesheet" th:href="@{/css/home-css/dropdown.css}">
     <link rel="stylesheet" th:href="@{/css/my-appointments-css/my-appointments.css?v=1.4}">
@@ -54,11 +54,11 @@
 
             <div class="appointment-details">
                 <div class="detail-row">
-                    <span class="label" th:text="#{appointments.date}">Fecha:</span>
+                    <span class="label" th:text="#{appointments.date}">Date:</span>
                     <span class="value" th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy')}"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="label" th:text="#{appointments.time}">Hora:</span>
+                    <span class="label" th:text="#{appointments.time}">Hour:</span>
                     <span class="value" th:text="${#temporals.format(appointment.appointmentDateTime, 'HH:mm')}"></span>
                 </div>
                 <div class="detail-row">

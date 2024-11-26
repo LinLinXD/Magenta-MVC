@@ -24,7 +24,6 @@ public class CreateAppointmentDTO {
     @Builder.Default
     private List<QuestionnaireResponseDTO> responses = new ArrayList<>();
 
-    // Método toString para debug
     @Override
     public String toString() {
         return "CreateAppointmentDTO{" +

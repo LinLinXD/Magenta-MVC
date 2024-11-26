@@ -9,6 +9,11 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 @Configuration
 public class SessionConfig implements WebMvcConfigurer {
 
+    /**
+     * Configura el filtro de creación de sesión.
+     *
+     * @return una instancia de FilterRegistrationBean configurada con el filtro de creación de sesión.
+     */
     @Bean
     public FilterRegistrationBean<SessionCreationFilter> sessionFilter() {
         FilterRegistrationBean<SessionCreationFilter> registrationBean = new FilterRegistrationBean<>();

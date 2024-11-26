@@ -12,17 +12,44 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthDTO {
+    /**
+     * Token de autenticación del usuario.
+     */
     private String token;
 
+    /**
+     * Roles del usuario.
+     */
     @Builder.Default
     private Set<String> roles = new HashSet<>();
 
+    /**
+     * Nombre de usuario.
+     */
     private String username;
+
+    /**
+     * Nombre completo del usuario.
+     */
     private String name;
+
+    /**
+     * Correo electrónico del usuario.
+     */
     private String email;
+
+    /**
+     * Número de teléfono del usuario.
+     */
     private String phone;
+
+    /**
+     * Mensaje de error, si existe.
+     */
     private String error;
 
-    // Para la imagen en base64
+    /**
+     * URL de la imagen de perfil del usuario.
+     */
     private String profileImageUrl;
 }

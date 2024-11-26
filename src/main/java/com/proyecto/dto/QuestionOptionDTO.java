@@ -10,6 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionOptionDTO {
+    /**
+     * Identificador único de la opción.
+     */
     private Long id;
+
+    /**
+     * Texto de la opción.
+     */
     private String optionText;
 }

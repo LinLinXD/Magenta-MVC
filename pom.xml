@@ -22,7 +22,20 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <feign.version>12.4</feign.version>
         <feign.form.version>3.8.0</feign.form.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -82,6 +95,14 @@
         <dependency>
             <groupId>io.github.openfeign.form</groupId>
             <artifactId>feign-form-spring</artifactId>
+            <version>${feign.form.version}</version>
+        </dependency>
+
+        <!-- Feign Apache HC5 -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-hc5</artifactId>
+            <version>${feign.version}</version>
         </dependency>
 
         <!-- Apache HTTP Client -->
@@ -90,7 +111,6 @@
             <artifactId>httpclient5</artifactId>
             <version>5.2.1</version>
         </dependency>
-
 
         <!-- Thymeleaf Security -->
         <dependency>
@@ -131,6 +151,17 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <encoding>UTF-8</encoding>
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
                 </configuration>
             </plugin>
         </plugins>

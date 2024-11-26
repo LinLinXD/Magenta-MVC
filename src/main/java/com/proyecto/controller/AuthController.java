@@ -5,8 +5,6 @@ import com.proyecto.client.NotificationClient;
 import com.proyecto.dto.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,12 +19,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthClient authClient;
-    private final NotificationClient notificationClient;  // Usar client en lugar de service
+    private final NotificationClient notificationClient;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private static final String DEFAULT_PROFILE_IMAGE = "/images/default-profile-picture.png";
-    private static final String BACKEND_URL = "http://localhost:8080"; // URL de tu backend
-
+    /**
+     * Añade atributos de notificación al modelo.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     */
     @ModelAttribute
     public void addNotificationAttributes(Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");
@@ -52,19 +52,37 @@ public class AuthController {
         }
     }
 
+    /**
+     * Muestra la página de inicio de sesión.
+     *
+     * @param model el modelo para la vista.
+     * @return la vista de la página de inicio de sesión.
+     */
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginDTO", new LoginDTO());
         return "login";
     }
 
+    /**
+     * Maneja la solicitud de cierre de sesión.
+     *
+     * @param session la sesión HTTP actual.
+     * @return la redirección a la página de inicio con el parámetro de cierre de sesión.
+     */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/home?logout=true";
     }
 
-
+    /**
+     * Muestra la página de inicio.
+     *
+     * @param session la sesión HTTP actual.
+     * @param model el modelo para la vista.
+     * @return la vista de la página de inicio.
+     */
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         String username = (String) session.getAttribute("USERNAME");
@@ -95,7 +113,6 @@ public class AuthController {
                 model.addAttribute("profileImageUrl", profileImageUrl);
                 model.addAttribute("userInfo", userInfo);
             } catch (Exception e) {
-                logger.error("Error al obtener información del usuario: {}", e.getMessage());
                 model.addAttribute("profileImageUrl", "/images/default-profile-picture.png");
             }
         }
@@ -103,14 +120,20 @@ public class AuthController {
         return "/home";
     }
 
-
+    /**
+     * Procesa la solicitud de inicio de sesión.
+     *
+     * @param loginDTO el DTO con los datos de inicio de sesión.
+     * @param session la sesión HTTP actual.
+     * @param model el modelo para la vista.
+     * @return la redirección a la página de inicio.
+     */
     @PostMapping("/login")
     public String processLogin(@ModelAttribute LoginDTO loginDTO,
                                HttpSession session,
                                Model model) {
         try {
             AuthDTO response = authClient.login(loginDTO);
-            model.addAttribute("RegisterDTO", new RegisterDTO());
 
             // Guardar el token y la información básica
             session.setAttribute("JWT_TOKEN", response.getToken());
@@ -141,21 +164,31 @@ public class AuthController {
         }
     }
 
-
-
+    /**
+     * Muestra la página de registro.
+     *
+     * @param model el modelo para la vista.
+     * @return la vista de la página de registro.
+     */
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerDTO", new RegisterDTO());
         return "register";
     }
 
+    /**
+     * Procesa la solicitud de registro.
+     *
+     * @param registerDTO el DTO con los datos de registro.
+     * @param redirectAttributes atributos para redirección.
+     * @return la redirección a la página de inicio de sesión.
+     */
     @PostMapping("/register")
     public String processRegister(@ModelAttribute RegisterDTO registerDTO,
                                   RedirectAttributes redirectAttributes) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-
 
             AuthDTO response = authClient.register(registerDTO);
 
@@ -169,14 +202,19 @@ public class AuthController {
                 return "redirect:/register";
             }
         } catch (Exception e) {
-
             redirectAttributes.addFlashAttribute("error", "Error en el registro: " + e.getMessage());
             return "redirect:/register";
         }
     }
 
-
-
+    /**
+     * Procesa la solicitud de modificación de usuario.
+     *
+     * @param modifyUserDTO el DTO con los datos de modificación de usuario.
+     * @param session la sesión HTTP actual.
+     * @param redirectAttributes atributos para redirección.
+     * @return la redirección a la página de modificación de usuario.
+     */
     @PostMapping("/modifyUser")
     public String modifyUser(@ModelAttribute ModifyUserDTO modifyUserDTO,
                              HttpSession session,
@@ -187,11 +225,6 @@ public class AuthController {
         }
 
         try {
-            logger.debug("📤 Enviando solicitud de modificación para usuario: {} con imagen: {}",
-                    username,
-                    modifyUserDTO.getProfileImage() != null ?
-                            modifyUserDTO.getProfileImage().getSize() : "null");
-
             AuthDTO response = authClient.modifyUser(
                     modifyUserDTO.getName(),
                     modifyUserDTO.getEmail(),
@@ -204,8 +237,6 @@ public class AuthController {
                 if (response.getProfileImageUrl() != null) {
                     // Guardar la imagen en la sesión
                     session.setAttribute("PROFILE_IMAGE_URL", response.getProfileImageUrl());
-                    logger.debug("🖼️ Imagen guardada en sesión: {} caracteres",
-                            response.getProfileImageUrl().length());
                 }
                 redirectAttributes.addFlashAttribute("successMessage",
                         "Perfil actualizado correctamente");
@@ -213,19 +244,24 @@ public class AuthController {
 
             return "redirect:/modifyUser";
         } catch (Exception e) {
-            logger.error("Error al actualizar el perfil: ", e);
             redirectAttributes.addFlashAttribute("error",
                     "Error al actualizar el perfil: " + e.getMessage());
             return "redirect:/modifyUser";
         }
     }
 
+    /**
+     * Muestra el formulario de modificación de usuario.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista del formulario de modificación de usuario.
+     */
     @GetMapping("/modifyUser")
     public String showModifyUserForm(Model model, HttpSession session) {
-
         String username = (String) session.getAttribute("USERNAME");
 
-        if(username == null) {
+        if (username == null) {
             return "redirect:/login";
         } else {
             String profileImageUrl = (String) session.getAttribute("PROFILE_IMAGE_URL");
@@ -234,10 +270,14 @@ public class AuthController {
             model.addAttribute("currentProfileImage", profileImageUrl);
             return "modifyUser";
         }
-
-
     }
 
+    /**
+     * Refresca las notificaciones del usuario.
+     *
+     * @param session la sesión HTTP actual.
+     * @return un mapa con las notificaciones y el estado de la operación.
+     */
     @GetMapping("/refreshNotifications")
     @ResponseBody
     public Map<String, Object> refreshNotifications(HttpSession session) {
@@ -258,15 +298,4 @@ public class AuthController {
 
         return response;
     }
-
-
-    private void refreshNotifications(Model model, String username) {
-        var notifications = notificationClient.getUnreadNotifications(username);
-        model.addAttribute("notifications", notifications);
-        model.addAttribute("unreadNotificationsCount", notifications.size());
-
-        // También guardamos en sesión para acceso rápido
-        model.addAttribute("hasUnreadNotifications", notifications.size() > 0);
-    }
-
 }

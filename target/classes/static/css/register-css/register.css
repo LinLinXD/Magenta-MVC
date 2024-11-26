@@ -30,6 +30,14 @@ input:-webkit-autofill{
     overflow: hidden;
 }
 
+.home{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: #6c1372;
+    font-size: 2rem;
+}
+
 .card::after {
     content: '';
     position: absolute;

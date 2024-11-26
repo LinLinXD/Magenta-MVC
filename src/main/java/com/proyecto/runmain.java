@@ -13,7 +13,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class runmain {
 
-
+    /**
+     * Metodo principal que inicia la aplicación Spring Boot.
+     *
+     * @param args los argumentos de la línea de comandos.
+     */
     public static void main(String[] args) {
         SpringApplication.run(runmain.class, args);
     }

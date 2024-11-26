@@ -8,8 +8,6 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,6 +29,12 @@ public class AppointmentViewController {
     private final AppointmentClient appointmentClient;
     private final NotificationClient notificationClient;
 
+    /**
+     * Añade atributos de notificación al modelo.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     */
     @ModelAttribute
     public void addNotificationAttributes(Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");
@@ -56,15 +60,21 @@ public class AppointmentViewController {
         }
     }
 
+    /**
+     * Muestra la página principal de citas.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista de la página principal de citas.
+     */
     @GetMapping
-    public String showAppointmentsIndex(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String showAppointmentsIndex(Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");
         if (username == null) {
             return "redirect:/login";
         }
 
         try {
-
             // Para la página principal, mostramos las próximas citas y tipos de eventos disponibles
             List<EventType> eventTypes = Arrays.asList(EventType.values());
             model.addAttribute("eventTypes", eventTypes);
@@ -78,6 +88,14 @@ public class AppointmentViewController {
         }
     }
 
+    /**
+     * Muestra el calendario de disponibilidad de citas.
+     *
+     * @param eventType el tipo de evento para filtrar la disponibilidad.
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista del calendario de disponibilidad.
+     */
     @GetMapping("/calendar")
     public String showCalendar(
             @RequestParam(required = true) EventType eventType,
@@ -96,10 +114,8 @@ public class AppointmentViewController {
             LocalDate firstDay = currentMonth.atDay(1);
             LocalDate lastDay = currentMonth.atEndOfMonth();
 
-            // Crear lista de todos los días del mes
             List<LocalDate> daysInMonth = new ArrayList<>();
 
-            // Agregar días previos vacíos para alinear correctamente el calendario
             DayOfWeek firstDayOfWeek = firstDay.getDayOfWeek();
             int paddingDays = firstDayOfWeek.getValue() - 1;
 
@@ -107,12 +123,10 @@ public class AppointmentViewController {
                 daysInMonth.add(null);
             }
 
-            // Agregar todos los días del mes
             for (LocalDate date = firstDay; !date.isAfter(lastDay); date = date.plusDays(1)) {
                 daysInMonth.add(date);
             }
 
-            // Obtener disponibilidad para cada día
             List<TimeSlotDTO> availability = new ArrayList<>();
             for (LocalDate date : daysInMonth) {
                 if (date != null) {
@@ -142,13 +156,21 @@ public class AppointmentViewController {
         }
     }
 
+    /**
+     * Muestra el formulario para agendar una nueva cita.
+     *
+     * @param eventType el tipo de evento para la cita.
+     * @param date la fecha de la cita.
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista del formulario de cita.
+     */
     @GetMapping("/new")
     public String showAppointmentForm(
             @RequestParam(required = false) EventType eventType,
             @RequestParam(required = false) LocalDate date,
             Model model,
-            HttpSession session,
-            RedirectAttributes redirectAttributes
+            HttpSession session
     ) {
         String username = (String) session.getAttribute("USERNAME");
         if (username == null) {
@@ -164,6 +186,8 @@ public class AppointmentViewController {
         }
 
         try {
+
+
             // Si hay tipo de evento pero no fecha, mostrar calendario
             if (date == null) {
                 return "redirect:/appointments/calendar?eventType=" + eventType;
@@ -191,27 +215,31 @@ public class AppointmentViewController {
         }
     }
 
-
+    /**
+     * Crea una nueva cita.
+     *
+     * @param createDTO el DTO con los datos de la cita.
+     * @param bindingResult el resultado de la validación del formulario.
+     * @param session la sesión HTTP actual.
+     * @param redirectAttributes atributos para redirección.
+     * @return la redirección a la vista de mis citas.
+     */
     @PostMapping("/new")
     public String createAppointment(
             @ModelAttribute CreateAppointmentDTO createDTO,
             BindingResult bindingResult,
             HttpSession session,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ) {
+            RedirectAttributes redirectAttributes) {
         String username = (String) session.getAttribute("USERNAME");
         if (username == null) {
             return "redirect:/login";
         }
 
-        // Validar que la fecha no sea nula
         if (createDTO.getAppointmentDateTime() == null) {
             redirectAttributes.addFlashAttribute("error", "Debe seleccionar una fecha y hora para la cita");
             return "redirect:/appointments/new?eventType=" + createDTO.getEventType();
         }
 
-        // Validar que la fecha no sea en el pasado
         if (createDTO.getAppointmentDateTime().isBefore(LocalDateTime.now())) {
             redirectAttributes.addFlashAttribute("error", "No se puede agendar una cita en el pasado");
             return "redirect:/appointments/new?eventType=" + createDTO.getEventType();
@@ -223,8 +251,7 @@ public class AppointmentViewController {
         }
 
         try {
-            // Debug log para ver qué se está enviando
-            log.debug("Enviando DTO al servidor: {}", createDTO);
+
 
             AppointmentDTO appointment = appointmentClient.createAppointment(createDTO, username);
             redirectAttributes.addFlashAttribute("success",
@@ -235,9 +262,7 @@ public class AppointmentViewController {
             );
             return "redirect:/appointments/my-appointments";
         } catch (FeignException e) {
-            log.error("Error al crear la cita: ", e);
             String errorMessage = e.contentUTF8();
-            // Intentar extraer el mensaje de error del JSON si es posible
             if (errorMessage.contains("error\":\"")) {
                 errorMessage = errorMessage.split("error\":\"")[1].split("\"")[0];
             }
@@ -246,6 +271,13 @@ public class AppointmentViewController {
         }
     }
 
+    /**
+     * Muestra las citas del usuario actual.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista de mis citas.
+     */
     @GetMapping("/my-appointments")
     public String showMyAppointments(Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");
@@ -266,6 +298,14 @@ public class AppointmentViewController {
         }
     }
 
+    /**
+     * Cancela una cita.
+     *
+     * @param id el ID de la cita a cancelar.
+     * @param session la sesión HTTP actual.
+     * @param redirectAttributes atributos para redirección.
+     * @return la redirección a la vista de mis citas.
+     */
     @PostMapping("/{id}/cancel")
     public String cancelAppointment(
             @PathVariable Long id,
@@ -288,6 +328,14 @@ public class AppointmentViewController {
         return "redirect:/appointments/my-appointments";
     }
 
+    /**
+     * Muestra el detalle de una cita.
+     *
+     * @param appointmentId el ID de la cita.
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     * @return la vista del detalle de la cita.
+     */
     @GetMapping("/{appointmentId}")
     public String showAppointmentDetail(@PathVariable Long appointmentId, Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");

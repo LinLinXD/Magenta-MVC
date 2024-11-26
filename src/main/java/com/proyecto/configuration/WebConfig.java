@@ -14,15 +14,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
 
+    /**
+     * Constructor de la clase WebConfig.
+     *
+     * @param authInterceptor el interceptor de autenticación.
+     */
     public WebConfig(AuthInterceptor authInterceptor) {
         this.authInterceptor = authInterceptor;
     }
 
+    /**
+     * Configura los controladores de vista.
+     *
+     * @param registry el registro de controladores de vista.
+     */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", "/home");
     }
 
+    /**
+     * Configura los interceptores.
+     *
+     * @param registry el registro de interceptores.
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
@@ -35,6 +50,11 @@ public class WebConfig implements WebMvcConfigurer {
                 );
     }
 
+    /**
+     * Configura los manejadores de recursos.
+     *
+     * @param registry el registro de manejadores de recursos.
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
@@ -59,6 +79,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCachePeriod(3600);
     }
 
+    /**
+     * Personaliza el contenedor del servidor web.
+     *
+     * @return un customizador de fábrica de servidor web para Tomcat.
+     */
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainerCustomizer() {
         return container -> {

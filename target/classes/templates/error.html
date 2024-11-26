@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{error.title}">Error Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .error-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .error-code {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #dc3545;
+            margin: 0;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            color: #343a40;
+            margin: 1rem 0;
+        }
+
+        .error-details {
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+
+        .debug-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 2rem;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .home-button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .language-selector select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-icon">⚠️</div>
+
+    <h1 class="error-code" th:text="${statusCode}">500</h1>
+
+    <h2 class="error-message" th:text="${errorMessage}">Error</h2>
+
+    <p class="error-details" th:text="${errorDetails}">
+        Ha ocurrido un error en el servidor.
+    </p>
+
+    <a href="/" class="home-button" th:text="#{error.back.home}">
+        Volver al Inicio
+    </a>
+
+    <div class="debug-info" th:if="${path != null}">
+        <h3 th:text="#{error.debug.info}">Información de Depuración:</h3>
+        <p th:if="${path != null}">
+            <strong th:text="#{error.debug.path} + ': '">Path: </strong>
+            <span th:text="${path}"></span>
+        </p>
+        <p th:if="${exceptionMessage != null}">
+            <strong th:text="#{error.debug.exception} + ': '">Exception: </strong>
+            <span th:text="${exceptionMessage}"></span>
+        </p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function changeLanguage(lang) {
+        let url = new URL(window.location.href);
+        url.searchParams.set('lang', lang);
+        window.location.href = url.toString();
+    }
+</script>
+</body>
+</html>

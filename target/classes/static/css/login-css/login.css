@@ -20,6 +20,14 @@ body {
     height: 100vh;
 }
 
+.home{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: #6c1372;
+    font-size: 2rem;
+}
+
 .login-container {
     background-color: #A900A3FF;
     width: 85%;

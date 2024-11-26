@@ -1,9 +1,15 @@
 package com.proyecto.util;
 
-
 import com.proyecto.dto.EventType;
 
 public class EventDescriptionUtil {
+
+    /**
+     * Obtiene la descripción del evento en español.
+     *
+     * @param type el tipo de evento.
+     * @return la descripción del evento en español.
+     */
     public static String getEventDescriptionEs(EventType type) {
         return switch (type) {
             case WEDDING -> "Celebra tu amor con una boda inolvidable";
@@ -15,6 +21,12 @@ public class EventDescriptionUtil {
         };
     }
 
+    /**
+     * Obtiene la descripción del evento en inglés.
+     *
+     * @param type el tipo de evento.
+     * @return la descripción del evento en inglés.
+     */
     public static String getEventDescriptionEn(EventType type) {
         return switch (type) {
             case WEDDING -> "Celebrate your love with an unforgettable wedding";
@@ -26,6 +38,12 @@ public class EventDescriptionUtil {
         };
     }
 
+    /**
+     * Obtiene la descripción del evento en portugués.
+     *
+     * @param type el tipo de evento.
+     * @return la descripción del evento en portugués.
+     */
     public static String getEventDescriptionBr(EventType type) {
         return switch (type) {
             case WEDDING -> "Celebre seu amor com um casamento inesquecível";
@@ -34,7 +52,6 @@ public class EventDescriptionUtil {
             case BAPTISM -> "Celebre o batismo com uma cerimônia única";
             case CORPORATE -> "Organize eventos corporativos profissionais";
             case OTHER -> "Personalize qualquer tipo de evento especial";
-
         };
     }
 }

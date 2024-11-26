@@ -33,6 +33,11 @@ import java.util.List;
 @Configuration
 public class FeignConfig {
 
+    /**
+     * Configura el codificador de formularios de Feign.
+     *
+     * @return retorna el codificador de formularios de Feign.
+     */
     @Bean
     @Primary
     public Encoder feignFormEncoder() {
@@ -45,6 +50,11 @@ public class FeignConfig {
         }));
     }
 
+    /**
+     * Configura el cliente Feign con soporte SSL.
+     *
+     * @return el cliente Feign configurado.
+     */
     @Bean
     public Client feignClient() {
         try {
@@ -77,6 +87,11 @@ public class FeignConfig {
         }
     }
 
+    /**
+     * Interceptor de solicitudes para agregar el token JWT a las cabeceras.
+     *
+     * @return el interceptor de solicitudes.
+     */
     @Bean
     public RequestInterceptor requestInterceptor() {
         return template -> {

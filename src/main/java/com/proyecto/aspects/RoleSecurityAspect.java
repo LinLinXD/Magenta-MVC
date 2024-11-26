@@ -8,17 +8,24 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpSession;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 @Aspect
 @Component
 public class RoleSecurityAspect {
-    private static final Logger logger = LoggerFactory.getLogger(RoleSecurityAspect.class);
 
+    /**
+     * Este aspecto, en su definición, se encarga de interceptar los métodos anotados con @RequireRole
+     * y verificar si el usuario tiene el rol requerido para ejecutar el metodo.
+     * En dado caso de que el usuario no lo tenga, tirara una excepción de seguridad.
+     * usado para el rol de administrador.
+     * @param joinPoint Representa el punto de ejecución del metodo anotado con @RequireRole
+     * @param requireRole Contiene el rol requerido para ejecutar el metodo
+     * @return devuelve el resultado de la ejecución del metodo.
+     * @throws Throwable Recoje las excepciones que se puedan generar en la ejecución del metodo.
+     */
     @Around("@annotation(requireRole)")
     public Object checkRole(ProceedingJoinPoint joinPoint, RequireRole requireRole) throws Throwable {
-        logger.debug("Verificando rol para {}", joinPoint.getSignature().getName());
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
@@ -32,7 +39,6 @@ public class RoleSecurityAspect {
 
         @SuppressWarnings("unchecked")
         Set<String> roles = (Set<String>) session.getAttribute("USER_ROLES");
-        logger.debug("Roles del usuario: {}", roles);
 
         if (roles == null || !roles.contains(requireRole.value())) {
             throw new SecurityException("No tienes el rol necesario: " + requireRole.value());

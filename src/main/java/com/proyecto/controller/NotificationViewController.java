@@ -22,6 +22,12 @@ public class NotificationViewController {
 
     private final NotificationClient notificationClient;
 
+    /**
+     * Añade atributos de notificación al modelo.
+     *
+     * @param model el modelo para la vista.
+     * @param session la sesión HTTP actual.
+     */
     @ModelAttribute
     public void addNotificationAttributes(Model model, HttpSession session) {
         String username = (String) session.getAttribute("USERNAME");
@@ -29,7 +35,6 @@ public class NotificationViewController {
             try {
                 List<AppointmentNotificationDTO> notifications = notificationClient.getUnreadNotifications(username);
                 if (notifications != null) {
-                    // Contar solo las notificaciones enviadas y no leídas
                     long unreadCount = notifications.stream()
                             .filter(n -> n.isSent() && !n.isRead())
                             .count();
@@ -47,15 +52,17 @@ public class NotificationViewController {
         }
     }
 
+    /**
+     * Marca una notificación como leída.
+     *
+     * @param id el ID de la notificación.
+     * @param request la solicitud HTTP actual.
+     * @return la redirección a la página anterior.
+     */
     @PostMapping("/{id}/read")
     public String markNotificationAsRead(@PathVariable Long id,
                                          HttpServletRequest request) {
-        try {
             notificationClient.markNotificationAsRead(id);
-        } catch (Exception e) {
-            // Manejar error si es necesario
-        }
-
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/home");
     }

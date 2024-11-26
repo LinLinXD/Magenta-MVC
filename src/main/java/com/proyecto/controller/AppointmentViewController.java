@@ -73,18 +73,12 @@ public class AppointmentViewController {
         if (username == null) {
             return "redirect:/login";
         }
-
         try {
-            // Para la página principal, mostramos las próximas citas y tipos de eventos disponibles
-            List<EventType> eventTypes = Arrays.asList(EventType.values());
-            model.addAttribute("eventTypes", eventTypes);
-            model.addAttribute("eventDescriptionUtil", EventDescriptionUtil.class);
             model.addAttribute("username", username);
             return "appointments/index";
         } catch (Exception e) {
             log.error("Error al cargar la página principal: ", e);
-            model.addAttribute("error", "Error al cargar la información");
-            return "appointments/index";
+            return "home";
         }
     }
 
@@ -101,11 +95,12 @@ public class AppointmentViewController {
             @RequestParam(required = true) EventType eventType,
             Model model,
             HttpSession session) {
-
         String username = (String) session.getAttribute("USERNAME");
-        if (username == null) {
+
+        if(username == null){
             return "redirect:/login";
         }
+
 
         try {
             model.addAttribute("username", username);
